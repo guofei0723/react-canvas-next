@@ -1,13 +1,15 @@
-import { PropsWithChildren, useEffect, useRef } from 'react'
-import Root from '../core/container/root';
+import { ReactNode, useEffect, useRef } from 'react'
+import Root from '../core/react-renderer/root';
 import Renderer from './renderer';
+import { FiberProvider, useContextBridge } from 'its-fine';
 
 export interface CanvasProps {
   width?: number;
   height?: number;
+  children?: ReactNode;
 }
 
-export const Canvas: React.FC<PropsWithChildren<CanvasProps>> = ({
+const CanvasImpl: React.FC<CanvasProps> = ({
   children,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null!);
@@ -26,11 +28,21 @@ export const Canvas: React.FC<PropsWithChildren<CanvasProps>> = ({
     }
   }, []);
 
+  const ContextBridge = useContextBridge();
+
   useEffect(() => {
-    root.current?.render(children);
+    root.current?.render(<ContextBridge>{children}</ContextBridge>);
   });
 
   return (
-    <canvas ref={canvasRef}>{children}</canvas>
+    <canvas ref={canvasRef} />
+  )
+}
+
+export const  Canvas: React.FC<CanvasProps> = (props) => {
+  return (
+    <FiberProvider>
+      <CanvasImpl {...props} />
+    </FiberProvider>
   )
 }
