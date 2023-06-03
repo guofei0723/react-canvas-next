@@ -1,17 +1,20 @@
-import { ReactNode } from "react";
-import { Reconciler } from "react-reconciler";
-import { RendererModel } from "./model";
-import reconciler from "./reconciler";
+import { ReactNode } from 'react';
+import { CellStore } from './model';
+import reconciler from './reconciler';
 
 export default class Root {
   private _unmounted = false;
   private _rootContainer: any;
-  private _model: RendererModel;
+  private store: { data: CellStore } = {
+    data: {
+      cellIds: [],
+      entities: {},
+    },
+  };
 
   constructor(private options: any) {
-    this._model = new RendererModel();
     this._rootContainer = reconciler.createContainer(
-      this._model,
+      this.store,
       0,
       null,
       false,
@@ -23,7 +26,7 @@ export default class Root {
   }
 
   get data() {
-    return this._model.data;
+    return this.store.data;
   }
 
   render(nodes: ReactNode) {

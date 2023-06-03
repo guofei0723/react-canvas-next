@@ -1,11 +1,11 @@
 import Reconciler, { Fiber, HostConfig } from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants';
-import { Cell, RendererModel } from './model';
+import { CellStore } from './model';
 
 type Type = string;
 type Props = { [key: string]: any };
-type Container = RendererModel;
-type Instance = Cell;
+type Container = { data: CellStore }; // RendererModel;
+type Instance = any; //  Cell;
 type TextInstance = string;
 
 type SuspenseInstance = any;
@@ -13,7 +13,7 @@ type HydratableInstance = any;
 type PublicInstance = any;
 type HostContext = any;
 type UpdatePayload = any;
-type ChildSet = RendererModel;
+type ChildSet = any; // RendererModel;
 type TimeoutHandle = any;
 type NoTimeout = number | undefined;
 
@@ -37,19 +37,37 @@ export const hostConfig: HostConfig<
   supportsHydration: false,
   noTimeout: undefined,
   isPrimaryRenderer: false,
-  createInstance: function (type: string, props: Props, rootContainer: Container, hostContext: any, internalHandle: any): Instance {
-    return {
+  createInstance: function (_tagType: string, props: Props, rootContainer: Container, hostContext: any, internalHandle: any): Instance {
+    const { children, type: cellType, ...instanceProps } = props;
+  
+    const obj = {
       id: `${Math.random()}`,
-      type: type.replace(/^rcn/, '').toLowerCase(),
-      props,
+      type: cellType,
+      props: instanceProps,
+      children: [],
     };
+
+    return {
+      cellId: obj.id,
+      entities: {
+        [obj.id]: obj,
+      }
+    }
   },
   createTextInstance: function (text: string, rootContainer: Container, hostContext: any, internalHandle: any): TextInstance {
     console.error("Function not implemented.");
     return text;
   },
   appendInitialChild: function (parentInstance: Instance, child: Instance): void {
-    console.error("Function not implemented.");
+    console.error("Function not implemented.", { parentInstance, child });
+    const { cellId: parentId, entities } = parentInstance;
+    const { cellId: childId } = child;
+    const parent = entities[parentId];
+    parent.children.push(childId);
+    parentInstance.entities = {
+      ...entities,
+      ...child.entities,
+    };
   },
   finalizeInitialChildren: function (instance: Instance, type: string, props: Props, rootContainer: Container, hostContext: any): boolean {
     return false;
@@ -108,18 +126,21 @@ export const hostConfig: HostConfig<
     console.error("Function not implemented.");
   },
   createContainerChildSet(container): ChildSet {
-    console.log('createContainerChildSet:', { container });
-    return container;
+    console.log('createContainerChildSet:', { ...container.data });
+    return { ...container.data };
   },
-  appendChildToContainerChildSet(childSet, child) {
+  appendChildToContainerChildSet(childSet, child: Instance) {
     console.log('appendChildToContainerChildSet:', { childSet, child });
-    childSet.addCell(child as Instance)
+    const { cellIds, entities } = childSet;
+    childSet.entities = { ...entities, ...child.entities };
+    childSet.cellIds = [...cellIds, child.cellId];
   },
   finalizeContainerChildren(container, newChildren) {
     console.log('finalizeContainerChildren:', { container, newChildren });
   },
   replaceContainerChildren(container, newChildren) {
     console.log('replaceContainerChildren:', { container, newChildren });
+    container.data = newChildren;
   },
 };
 

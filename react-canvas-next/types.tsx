@@ -1,7 +1,6 @@
-import { RectProps } from './core/react-renderer/model';
-
 export interface ReactCanvasNextElements {
-  rcnRect: RectProps;
+  // rcnRect: RectProps;
+  canvasNextEle: any
 }
 
 declare global {
