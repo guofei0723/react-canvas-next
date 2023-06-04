@@ -1,6 +1,7 @@
 import Reconciler, { Fiber, HostConfig } from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants';
 import { CellStore } from './model';
+import { deepCompare } from '../../utils';
 
 type Type = string;
 type Props = { [key: string]: any };
@@ -63,7 +64,9 @@ export const hostConfig: HostConfig<
     const { cellId: parentId, entities } = parentInstance;
     const { cellId: childId } = child;
     const parent = entities[parentId];
-    parent.children.push(childId);
+    if (!parent.children.includes(childId)) {
+      parent.children.push(childId);
+    }
     parentInstance.entities = {
       ...entities,
       ...child.entities,
@@ -73,7 +76,10 @@ export const hostConfig: HostConfig<
     return false;
   },
   prepareUpdate: function (instance: Instance, type: string, oldProps: Props, newProps: Props, rootContainer: Container, hostContext: any) {
-    console.error("Function not implemented.");
+    const { children: _newChildren, type: newCellType, ...newInstanceProps } = newProps;
+    const { children: _oldChildren, type: oldCellType, ...oldInstanceProps } = oldProps;
+
+    return newCellType !== oldCellType || !deepCompare(newInstanceProps, oldInstanceProps);
   },
   shouldSetTextContent: function (type: string, props: Props): boolean {
     return false;
@@ -133,7 +139,9 @@ export const hostConfig: HostConfig<
     console.log('appendChildToContainerChildSet:', { childSet, child });
     const { cellIds, entities } = childSet;
     childSet.entities = { ...entities, ...child.entities };
-    childSet.cellIds = [...cellIds, child.cellId];
+    if (!childSet.cellIds.includes(child.cellId)) {
+      childSet.cellIds = [...cellIds, child.cellId];
+    }
   },
   finalizeContainerChildren(container, newChildren) {
     console.log('finalizeContainerChildren:', { container, newChildren });
@@ -141,6 +149,29 @@ export const hostConfig: HostConfig<
   replaceContainerChildren(container, newChildren) {
     console.log('replaceContainerChildren:', { container, newChildren });
     container.data = newChildren;
+  },
+  cloneInstance(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance) {
+    console.log('cloneInstance:', {instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance})
+    const { children: _newChildren, type: newCellType, ...newInstanceProps } = newProps;
+    const { children: _oldChildren, type: oldCellType, ...oldInstanceProps } = oldProps;
+
+    // 属性有变化
+    if (updatePayload) {
+      const obj = {
+        ...instance.entities[instance.cellId],
+        type: newCellType,
+        props: newInstanceProps,
+      };
+      return {
+        ...instance,
+        entities: {
+          ...instance.entities,
+          [instance.cellId]: obj,
+        }
+      };
+    }
+
+    return instance;
   },
 };
 

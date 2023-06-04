@@ -1,18 +1,51 @@
 import { RectProps } from '../components';
 import { CellId } from '../components/base';
+import { CIRCLE_TYPE } from '../components/circle';
 import { CellStore } from '../core/react-renderer/model';
 import Root from '../core/react-renderer/root';
 
-const IGNORE_LINE_WIDTH = 20190822;
+export const IGNORE_LINE_WIDTH = 20190822;
 
 export default class Renderer {
   private ctx: CanvasRenderingContext2D;
   private _rafId: number = 0;
   // 上一次渲染的数据
   private _prevData: CellStore | null = null;
+  private _prevSize: { w: number, h: number };
+  private _viewBox: [number, number, number, number];
 
-  constructor(public canvas: HTMLCanvasElement, public root: Root,  private options: any) {
+  constructor(private canvas: HTMLCanvasElement, public root: Root,  private options: any) {
     this.ctx = canvas.getContext('2d')!;
+    this._prevSize = {
+      w: canvas.width,
+      h: canvas.height,
+    };
+    this._viewBox = [0, 0, canvas.width, canvas.height];
+  }
+
+  get viewBox() {
+    return this._viewBox;
+  }
+
+  set viewBox(value: [number, number, number, number]) {
+    this._viewBox = value;
+  }
+
+  /**
+   * Determine whether the size has changed
+   */
+  private sizeChanges() {
+    const { w: prevW, h: prevH } = this._prevSize;
+    return prevW !== this.canvas.width || prevH !== this.canvas.height;
+  }
+
+  private updateDimension() {
+    const { ctx } = this;
+    const { width, height } = this.canvas;
+    const [viewMinX, viewMinY, viewW, viewH] = this._viewBox;
+    ctx.scale(width / viewW, height / viewH);
+    ctx.translate(-viewMinX, -viewMinY);
+    ctx.lineWidth = IGNORE_LINE_WIDTH;
   }
 
   /**
@@ -27,13 +60,40 @@ export default class Renderer {
    * 渲染
    */
   private render() {
-    const needRepaint = this._prevData !== this.root.data;
+    const sizeChanged = this.sizeChanges();
+    if (sizeChanged) {
+      this._prevSize = {
+        w: this.canvas.width,
+        h: this.canvas.height,
+      };
+    }
+    const needRepaint = this._prevData !== this.root.data || sizeChanged;
     this._prevData = this.root.data;
 
     if (needRepaint && this.root.data) {
-      this.paintCells(this.root.data.cellIds);
+      this.draw();
     }
+  }
 
+  /**
+   * draw content
+   */
+  private draw() {
+    const { ctx } = this;
+    
+    ctx.save();
+    this.clear();
+    this.updateDimension();
+    this.paintCells(this.root.data.cellIds);
+    ctx.restore();
+  }
+  
+  private clear() {
+    this.ctx.save();
+    this.ctx.setTransform(1,0,0,1,0,0);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.restore();
   }
 
   /**
@@ -69,6 +129,17 @@ export default class Renderer {
 
         if (ctx.lineWidth < IGNORE_LINE_WIDTH) {
           ctx.strokeRect(0, 0, width, height);
+        }
+      }
+
+      if (type === CIRCLE_TYPE) {
+        console.log('draw circle:', props);
+        ctx.beginPath();
+        ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
+        ctx.fill();
+
+        if (ctx.lineWidth < IGNORE_LINE_WIDTH) {
+          ctx.stroke();
         }
       }
 
