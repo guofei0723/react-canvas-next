@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Canvas, CanvasProps, Circle, Group, Rect } from 'react-canvas-next';
+import { Canvas, Circle, Group, Rect } from 'react-canvas-next';
 
 const meta: Meta<typeof Canvas> = {
   component: Canvas,
@@ -58,4 +58,26 @@ export const ViewBox: React.FC<any> = ({
     y: 400,
     r: 150,
   }
+}
+
+
+export const PreserveAspectRatio: React.FC<any> = ({
+  ...props
+}) => {
+  const [,,viewW, viewH] = props.viewBox;
+  return (
+    <Canvas {...props} style={{ border: '1px solid red' }}>
+      <Rect x={0} y={0} width={viewW / 2} height={viewH / 2} fill='slategray' />
+      <Rect x={viewW / 2} y={0} width={viewW / 2} height={viewH / 2} fill='red' />
+      <Rect x={0} y={viewH / 2} width={viewW / 2} height={viewH / 2} fill='green' />
+      <Rect x={viewW / 2} y={viewH / 2} width={viewW / 2} height={viewH / 2} fill='blue' />
+      <Circle x={viewW / 2} r={50} fill='steelblue' />
+    </Canvas>
+  )
+};
+(PreserveAspectRatio as StoryObj<typeof PreserveAspectRatio>).args = {
+  width: 400,
+  height: 400,
+  viewBox: [0, 0, 800, 450],
+  preserveAspectRatio: true,
 }

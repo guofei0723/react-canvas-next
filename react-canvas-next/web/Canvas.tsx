@@ -1,6 +1,6 @@
 import { CSSProperties, ReactNode, useEffect, useRef } from 'react'
 import Root from '../core/react-renderer/root';
-import Renderer, { IGNORE_LINE_WIDTH } from './renderer';
+import Renderer, { IGNORE_LINE_WIDTH, KeepAspectRatioType } from './renderer';
 import { FiberProvider, useContextBridge } from 'its-fine';
 
 export interface CanvasProps {
@@ -12,6 +12,11 @@ export interface CanvasProps {
    * 4 digits means [min-x, min-y, width, height]
    */
   viewBox?: [number, number, number, number];
+  /**
+   * The **preserveAspectRatio** attribute indicates how an element with a viewBox providing a given aspect ratio must fit into a viewport with a different aspect ratio.  
+   * It is similar to the preserveAspectRatio attribute of svg.
+   */
+  preserveAspectRatio?: KeepAspectRatioType;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
@@ -21,6 +26,7 @@ const CanvasImpl: React.FC<CanvasProps> = ({
   width = 300,
   height = 150,
   viewBox = [],
+  preserveAspectRatio = true,
   className,
   style,
   children,
@@ -45,9 +51,8 @@ const CanvasImpl: React.FC<CanvasProps> = ({
   }, []);
 
   useEffect(() => {
-    const { devicePixelRatio } = window;
-    rendererRef.current.viewBox = [viewMinX, viewMinY, viewW, viewH]
-  }, [viewMinX, viewMinY, viewW, viewH]);
+    rendererRef.current.updateViewBox([viewMinX, viewMinY, viewW, viewH], preserveAspectRatio);
+  }, [viewMinX, viewMinY, viewW, viewH, preserveAspectRatio]);
 
   const ContextBridge = useContextBridge();
 

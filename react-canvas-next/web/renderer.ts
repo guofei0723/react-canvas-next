@@ -6,13 +6,17 @@ import Root from '../core/react-renderer/root';
 
 export const IGNORE_LINE_WIDTH = 20190822;
 
+export type ViewBox = [number, number, number, number];
+export type KeepAspectRatioType = boolean | 'meet' | 'slice';
+
 export default class Renderer {
   private ctx: CanvasRenderingContext2D;
   private _rafId: number = 0;
   // 上一次渲染的数据
   private _prevData: CellStore | null = null;
   private _prevSize: { w: number, h: number };
-  private _viewBox: [number, number, number, number];
+  private _viewBox: ViewBox;
+  private _keepAspectRatioj: KeepAspectRatioType = false;
 
   constructor(private canvas: HTMLCanvasElement, public root: Root,  private options: any) {
     this.ctx = canvas.getContext('2d')!;
@@ -31,6 +35,11 @@ export default class Renderer {
     this._viewBox = value;
   }
 
+  public updateViewBox(box: ViewBox, ratioType: KeepAspectRatioType) {
+    this.viewBox = box;
+    this._keepAspectRatioj = ratioType;
+  }
+
   /**
    * Determine whether the size has changed
    */
@@ -40,12 +49,44 @@ export default class Renderer {
   }
 
   private updateDimension() {
-    const { ctx } = this;
+    const { ctx, _keepAspectRatioj: ratioType } = this;
     const { width, height } = this.canvas;
     const [viewMinX, viewMinY, viewW, viewH] = this._viewBox;
-    ctx.scale(width / viewW, height / viewH);
+
+    const xScale = width / viewW;
+    const yScale = height / viewH;
+
+    if (!ratioType) {
+      ctx.scale(xScale, yScale);
+    } else {
+      let finalScale: number;
+
+      switch (ratioType) {
+        case 'meet': {
+          finalScale = Math.min(xScale, yScale);
+          break;
+        }
+        case 'slice': {
+          finalScale = Math.max(xScale, yScale);
+          break;
+        }
+
+        default: {
+          finalScale = Math.min(xScale, yScale);
+        }
+      }
+
+      ctx.scale(finalScale, finalScale);
+      const offX = (width / finalScale - viewW) / 2;
+      const offY = (height / finalScale - viewH) / 2;
+      ctx.translate(offX, offY);
+    }
+
     ctx.translate(-viewMinX, -viewMinY);
-    ctx.lineWidth = IGNORE_LINE_WIDTH;
+
+    ctx.beginPath();
+    ctx.rect(viewMinX, viewMinY, viewW, viewH);
+    ctx.clip();
   }
 
   /**
@@ -84,6 +125,9 @@ export default class Renderer {
     ctx.save();
     this.clear();
     this.updateDimension();
+
+    ctx.lineWidth = IGNORE_LINE_WIDTH;
+
     this.paintCells(this.root.data.cellIds);
     ctx.restore();
   }
