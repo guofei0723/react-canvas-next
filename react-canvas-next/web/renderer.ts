@@ -116,6 +116,10 @@ export default class Renderer {
     }
   }
 
+  private shouldDrawStroke() {
+    return this.ctx.strokeStyle !== 'transparent' && this.ctx.lineWidth < IGNORE_LINE_WIDTH;
+  }
+
   /**
    * draw content
    */
@@ -125,8 +129,8 @@ export default class Renderer {
     ctx.save();
     this.clear();
     this.updateDimension();
-
-    ctx.lineWidth = IGNORE_LINE_WIDTH;
+    // disable stroke by default
+    ctx.strokeStyle = 'transparent';
 
     this.paintCells(this.root.data.cellIds);
     ctx.restore();
@@ -163,7 +167,7 @@ export default class Renderer {
         ctx.strokeStyle = stroke;
       }
       if (typeof lineWidth === 'number') {
-        ctx.lineWidth = lineWidth === 0 ? IGNORE_LINE_WIDTH : lineWidth;
+        ctx.lineWidth = (lineWidth <= 0 || lineWidth === Infinity || isNaN(lineWidth)) ? IGNORE_LINE_WIDTH : lineWidth;
       }
 
       // 按类型渲染
@@ -171,7 +175,7 @@ export default class Renderer {
         const { width = 100, height = 60 } = props;
         ctx.fillRect(0, 0, width, height);
 
-        if (ctx.lineWidth < IGNORE_LINE_WIDTH) {
+        if (this.shouldDrawStroke()) {
           ctx.strokeRect(0, 0, width, height);
         }
       }
@@ -182,7 +186,7 @@ export default class Renderer {
         ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
         ctx.fill();
 
-        if (ctx.lineWidth < IGNORE_LINE_WIDTH) {
+        if (this.shouldDrawStroke()) {
           ctx.stroke();
         }
       }
