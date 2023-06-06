@@ -6,12 +6,14 @@ export interface RectProps extends Omit<CellPropsBase, 'children'> {
   height: number;
 }
 
+export const RECT_TYPE = 'rect';
+
 export interface RectModel extends CellModel<RectProps> {
-  type: 'rect',
+  type: typeof RECT_TYPE,
 }
 
 export const Rect: FC<RectProps> = (props) => {
   return (
-    <CELL_TAG {...props} type='rect' />
+    <CELL_TAG {...props} type={RECT_TYPE} />
   )
 };

@@ -1,6 +1,7 @@
-import { RectProps } from '../components';
+import { RECT_TYPE, RectProps } from '../components';
 import { CellId } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
+import { CLIPPATH_TYPE } from '../components/clippath';
 import { CellStore } from '../core/react-renderer/model';
 import Root from '../core/react-renderer/root';
 
@@ -17,6 +18,7 @@ export default class Renderer {
   private _prevSize: { w: number, h: number };
   private _viewBox: ViewBox;
   private _keepAspectRatioj: KeepAspectRatioType = false;
+  private _clipPathCount = 0;
 
   constructor(private canvas: HTMLCanvasElement, public root: Root,  private options: any) {
     this.ctx = canvas.getContext('2d')!;
@@ -100,7 +102,7 @@ export default class Renderer {
   /**
    * 渲染
    */
-  private render() {
+  public render() {
     const sizeChanged = this.sizeChanges();
     if (sizeChanged) {
       this._prevSize = {
@@ -118,6 +120,13 @@ export default class Renderer {
 
   private shouldDrawStroke() {
     return this.ctx.strokeStyle !== 'transparent' && this.ctx.lineWidth < IGNORE_LINE_WIDTH;
+  }
+
+  /**
+   * is now in clipPath region
+   */
+  private inClipPath() {
+    return this._clipPathCount > 0;
   }
 
   /**
@@ -158,34 +167,42 @@ export default class Renderer {
       ctx.save();
       
       // 基础设置，位置、旋转、缩放，颜色，边
-      const { x = 0, y = 0, fill, stroke, lineWidth } = props;
+      const { x = 0, y = 0, fillRule } = props;
       ctx.translate(x, y);
-      if (fill) {
-        ctx.fillStyle = fill;
-      }
-      if (stroke) {
-        ctx.strokeStyle = stroke;
-      }
-      if (typeof lineWidth === 'number') {
-        ctx.lineWidth = (lineWidth <= 0 || lineWidth === Infinity || isNaN(lineWidth)) ? IGNORE_LINE_WIDTH : lineWidth;
-      }
 
-      // 按类型渲染
-      if (type === 'rect') {
-        const { width = 100, height = 60 } = props;
-        ctx.fillRect(0, 0, width, height);
-
-        if (this.shouldDrawStroke()) {
-          ctx.strokeRect(0, 0, width, height);
+      if (type === CLIPPATH_TYPE) {
+        // 记录剪切路径数量
+        this._clipPathCount += 1;
+        ctx.beginPath();
+      } else {
+        const { fill, stroke, lineWidth } = props;
+        if (fill) {
+          ctx.fillStyle = fill;
+        }
+        if (stroke) {
+          ctx.strokeStyle = stroke;
+        }
+        if (typeof lineWidth === 'number') {
+          ctx.lineWidth = (lineWidth <= 0 || lineWidth === Infinity || isNaN(lineWidth)) ? IGNORE_LINE_WIDTH : lineWidth;
         }
       }
 
-      if (type === CIRCLE_TYPE) {
-        console.log('draw circle:', props);
+      if (!this.inClipPath()) {
         ctx.beginPath();
-        ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
-        ctx.fill();
+      }
 
+      // 按类型渲染
+      if (type === RECT_TYPE) {
+        const { width, height } = props;
+        ctx.rect(0, 0, width, height);
+      }
+
+      if (type === CIRCLE_TYPE) {
+        ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
+      }
+
+      if (!this.inClipPath()) {
+        ctx.fill(fillRule);
         if (this.shouldDrawStroke()) {
           ctx.stroke();
         }
@@ -196,6 +213,11 @@ export default class Renderer {
       }
 
       ctx.restore();
+
+      if (type === CLIPPATH_TYPE) {
+        this._clipPathCount -= 1;
+        ctx.clip(props.fillRule);
+      }
     })
   }
 

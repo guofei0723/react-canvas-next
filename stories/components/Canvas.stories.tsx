@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { useEffect, useState } from 'react';
 import { Canvas, Circle, Group, Rect } from 'react-canvas-next';
 
 const meta: Meta<typeof Canvas> = {
@@ -15,6 +16,23 @@ export default meta;
 
 type Story = StoryObj<typeof Canvas>;
 
+const RandomRect = () => {
+  const [color, setColor] = useState('blue');
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const nextColor = [0, 0, 0].map(() => Math.floor(Math.random() * 256).toString(16));
+      setColor(`#${nextColor.join('')}`);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <Rect x={160} y={120} width={120} height={80} fill={color} />
+  )
+};
+
 export const Basic = () => {
   return (
     <Canvas width={800} height={600}>
@@ -26,6 +44,7 @@ export const Basic = () => {
         <Rect x={10} y={10} width={25} height={25} fill='yellow' />
       </Group>
       <Rect x={20} y={120} width={120} height={80} fill='green' lineWidth={0} />
+      <RandomRect />
     </Canvas>
   )
 }

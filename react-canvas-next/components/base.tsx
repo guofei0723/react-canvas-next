@@ -14,6 +14,7 @@ export interface CellProps {
   x?: number;
   y?: number;
   fill?: CSSProperties['color'] | CanvasGradient | CanvasPattern;
+  fillRule?: CanvasFillRule;
   stroke?: CSSProperties['color'] | CanvasGradient | CanvasPattern;
   lineWidth?: number;
   children?: ReactNode;
