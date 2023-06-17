@@ -41,10 +41,10 @@ const CanvasImpl: React.FC<CanvasProps> = ({
 
     const renderer = new Renderer(canvasRef.current, root.current, {});
     rendererRef.current = renderer;
-    renderer.start();
+    // renderer.start();
 
     return () => {
-      renderer.stop();
+      // renderer.stop();
       root.current?.unmount();
       root.current = null;
     }

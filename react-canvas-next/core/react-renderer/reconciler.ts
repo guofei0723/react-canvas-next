@@ -3,9 +3,14 @@ import { DefaultEventPriority } from 'react-reconciler/constants';
 import { CellStore } from './model';
 import { deepCompare } from '../../utils';
 
+export type DataStore = {
+  data: CellStore;
+  updateCanvas: () => void;
+}
+
 type Type = string;
 type Props = { [key: string]: any };
-type Container = { data: CellStore }; // RendererModel;
+type Container = DataStore; // RendererModel;
 type Instance = any; //  Cell;
 type TextInstance = string;
 
@@ -60,7 +65,6 @@ export const hostConfig: HostConfig<
     return text;
   },
   appendInitialChild: function (parentInstance: Instance, child: Instance): void {
-    console.error("Function not implemented.", { parentInstance, child });
     const { cellId: parentId, entities } = parentInstance;
     const { cellId: childId } = child;
     const parent = entities[parentId];
@@ -149,6 +153,7 @@ export const hostConfig: HostConfig<
   replaceContainerChildren(container, newChildren) {
     console.log('replaceContainerChildren:', { container, newChildren });
     container.data = newChildren;
+    container.updateCanvas();
   },
   cloneInstance(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance) {
     console.log('cloneInstance:', {instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance})

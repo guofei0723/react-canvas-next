@@ -1,15 +1,29 @@
 import { ReactNode } from 'react';
 import { CellStore } from './model';
-import reconciler from './reconciler';
+import reconciler, { DataStore } from './reconciler';
+
 
 export default class Root {
   private _unmounted = false;
   private _rootContainer: any;
-  private store: { data: CellStore } = {
+  /**
+   * data change callback
+   */
+  public onUpdate: null | (() => void) = null;
+  private _updateId: number = 0;
+  private store: DataStore = {
     data: {
       cellIds: [],
       entities: {},
     },
+
+    updateCanvas: () => {
+      cancelAnimationFrame(this._updateId);
+      this._updateId = requestAnimationFrame(() => {
+        console.info('update canvas');
+        this.onUpdate?.();
+      });
+    }
   };
 
   constructor(private options: any) {

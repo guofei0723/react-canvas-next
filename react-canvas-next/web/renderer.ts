@@ -28,6 +28,8 @@ export default class Renderer {
       h: canvas.height,
     };
     this._viewBox = [0, 0, canvas.width, canvas.height];
+    // 更新回调
+    this.root.onUpdate = () => this.render();
   }
 
   get viewBox() {
@@ -257,17 +259,17 @@ export default class Renderer {
     })
   }
 
-  /**
-   * 启动
-   */
-  start() {
-    this.loop();
-  }
+  // /**
+  //  * 启动
+  //  */
+  // start() {
+  //   this.loop();
+  // }
 
-  /**
-   * 停止
-   */
-  stop() {
-    cancelAnimationFrame(this._rafId);
-  }
+  // /**
+  //  * 停止
+  //  */
+  // stop() {
+  //   cancelAnimationFrame(this._rafId);
+  // }
 }
