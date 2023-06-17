@@ -21,5 +21,6 @@ export interface CellProps {
 }
 
 export type CellPropsBase = Omit<CellProps, 'type'>;
+export type CellPropsBaseWithoutChildren = Omit<CellPropsBase, 'children'>;
 
 export const CELL_TAG = 'canvasNextEle';

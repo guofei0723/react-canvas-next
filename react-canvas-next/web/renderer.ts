@@ -1,4 +1,4 @@
-import { RECT_TYPE, RectProps } from '../components';
+import { ARC_TYPE, PATH_TYPE, RECT_TYPE, RectProps } from '../components';
 import { CellId } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
 import { CLIPPATH_TYPE } from '../components/clippath';
@@ -19,6 +19,7 @@ export default class Renderer {
   private _viewBox: ViewBox;
   private _keepAspectRatioj: KeepAspectRatioType = false;
   private _clipPathCount = 0;
+  private _pathCount = 0;
 
   constructor(private canvas: HTMLCanvasElement, public root: Root,  private options: any) {
     this.ctx = canvas.getContext('2d')!;
@@ -130,6 +131,13 @@ export default class Renderer {
   }
 
   /**
+   * is now in path or clipPath region
+   */
+  private inPathMode() {
+    return this._clipPathCount > 0 || this._pathCount > 0;
+  }
+
+  /**
    * draw content
    */
   private draw() {
@@ -170,11 +178,14 @@ export default class Renderer {
       const { x = 0, y = 0, fillRule } = props;
       ctx.translate(x, y);
 
-      if (type === CLIPPATH_TYPE) {
-        // 记录剪切路径数量
-        this._clipPathCount += 1;
+      /**
+       * 当前在路径内部时无需不能再开始新路径
+       */
+      if (!this.inPathMode()) {
         ctx.beginPath();
-      } else {
+      }
+
+      if (!this.inPathMode()) {
         const { fill, stroke, lineWidth } = props;
         if (fill) {
           ctx.fillStyle = fill;
@@ -187,24 +198,39 @@ export default class Renderer {
         }
       }
 
-      if (!this.inClipPath()) {
-        ctx.beginPath();
+
+      if (type === CLIPPATH_TYPE) {
+        // 记录剪切路径数量
+        this._clipPathCount += 1;
+      }
+      if (type === PATH_TYPE) {
+        // 记录剪切路径数量
+        this._pathCount += 1;
       }
 
-      // 按类型渲染
-      if (type === RECT_TYPE) {
-        const { width, height } = props;
-        ctx.rect(0, 0, width, height);
-      }
+      // // 按类型渲染
+      // if (type === RECT_TYPE) {
+      //   const { width, height } = props;
+      //   ctx.rect(0, 0, width, height);
+      // }
 
-      if (type === CIRCLE_TYPE) {
-        ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
-      }
+      // if (type === CIRCLE_TYPE) {
+      //   ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
+      // }
 
-      if (!this.inClipPath()) {
-        ctx.fill(fillRule);
-        if (this.shouldDrawStroke()) {
-          ctx.stroke();
+      switch (type) {
+        case RECT_TYPE: {
+          const { width, height } = props;
+          ctx.rect(0, 0, width, height);
+          break;
+        }
+        case CIRCLE_TYPE: {
+          ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
+          break;
+        }
+        case ARC_TYPE: {
+          ctx.arc(0, 0, props.r, props.startAngle, props.endAngle, props.counterclockwise);
+          break;
         }
       }
 
@@ -212,8 +238,18 @@ export default class Renderer {
         this.paintCells(children)
       }
 
-      ctx.restore();
+      if (type === PATH_TYPE) {
+        this._pathCount -= 1;
+      }
 
+      if (!this.inPathMode()) {
+        ctx.fill(fillRule);
+        if (this.shouldDrawStroke()) {
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
       if (type === CLIPPATH_TYPE) {
         this._clipPathCount -= 1;
         ctx.clip(props.fillRule);
