@@ -7,6 +7,10 @@ export interface PathProps extends CellPropsBase {
    * path d
    */
   d?: string;
+  /**
+   * as a cliping path
+   */
+  asClip?: boolean;
 }
 
 export const PATH_TYPE = 'path';

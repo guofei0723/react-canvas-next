@@ -1,7 +1,6 @@
-import { ARC_TYPE, PATH_TYPE, RECT_TYPE, RectProps } from '../components';
+import { ARC_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, RECT_TYPE, ShapeModels } from '../components';
 import { CellId } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
-import { CLIPPATH_TYPE } from '../components/clippath';
 import { CellStore } from '../core/react-renderer/model';
 import Root from '../core/react-renderer/root';
 
@@ -200,11 +199,6 @@ export default class Renderer {
         }
       }
 
-
-      if (type === CLIPPATH_TYPE) {
-        // 记录剪切路径数量
-        this._clipPathCount += 1;
-      }
       if (type === PATH_TYPE) {
         // 记录剪切路径数量
         this._pathCount += 1;
@@ -244,7 +238,7 @@ export default class Renderer {
         this._pathCount -= 1;
       }
 
-      if (!this.inPathMode()) {
+      if (this.shouldPaintShape(type, props)) {
         ctx.fill(fillRule);
         if (this.shouldDrawStroke()) {
           ctx.stroke();
@@ -252,11 +246,16 @@ export default class Renderer {
       }
 
       ctx.restore();
-      if (type === CLIPPATH_TYPE) {
-        this._clipPathCount -= 1;
+
+      // as cliping path
+      if (type === PATH_TYPE && props.asClip) {
         ctx.clip(props.fillRule);
       }
     })
+  }
+
+  private shouldPaintShape(type: ShapeModels['type'], props: ShapeModels['props']) {
+    return type !== GROUP_TYPE && !this.inPathMode() && !(props as PathProps).asClip
   }
 
   // /**
