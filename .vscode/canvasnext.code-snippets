@@ -39,5 +39,39 @@
 			"  )",
 			"};"
 		]
+	},
+
+	"Generate Shape Component Story code": {
+		"scope": "typescriptreact",
+		"prefix": "storyshape",
+		"body": [
+			"import { Meta, StoryObj } from '@storybook/react';",
+			"import { Canvas, $1 } from 'react-canvas-next';",
+			"",
+			"const meta: Meta<typeof $1> = {",
+			"  component: $1,",
+			"  tags: ['autodocs'],",
+			"  decorators: [",
+			"    (Story) => {",
+			"      return (",
+			"        <Canvas width={400} height={300}>",
+			"          <Story />",
+			"        </Canvas>",
+			"      )",
+			"    }",
+			"  ]",
+			"}",
+			"",
+			"export default meta;",
+			"",
+			"type Story = StoryObj<typeof $1>;",
+			"",
+			"export const Basic: Story = {",
+			"  args: {",
+			"    $0",
+			"  }",
+			"};",
+			""
+		]
 	}
 }

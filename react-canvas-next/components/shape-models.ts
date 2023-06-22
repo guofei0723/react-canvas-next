@@ -1,6 +1,7 @@
 import { ArcModel } from './arc';
 import { CircleModel } from './circle';
 import { ClipPathModel } from './clippath';
+import { EllipseModel } from './ellipse';
 import { GroupModel } from './group';
 import { PathModel } from './path';
 import { RectModel } from './rect';
@@ -12,4 +13,5 @@ export type ShapeModels = RectModel
   | ClipPathModel
   | PathModel
   | ArcModel
+  | EllipseModel
   ;

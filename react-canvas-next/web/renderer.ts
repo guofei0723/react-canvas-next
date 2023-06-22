@@ -1,4 +1,4 @@
-import { ARC_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, RECT_TYPE, ShapeModels } from '../components';
+import { ARC_TYPE, ELLIPSE_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, RECT_TYPE, ShapeModels } from '../components';
 import { CellId } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
 import { CellStore } from '../core/react-renderer/model';
@@ -226,6 +226,10 @@ export default class Renderer {
         }
         case ARC_TYPE: {
           ctx.arc(0, 0, props.r, props.startAngle, props.endAngle, props.counterclockwise);
+          break;
+        }
+        case ELLIPSE_TYPE: {
+          ctx.ellipse(0, 0, props.rx, props.ry, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
           break;
         }
       }

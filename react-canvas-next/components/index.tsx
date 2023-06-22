@@ -5,3 +5,4 @@ export * from './circle';
 // export * from './clippath';
 export * from './path';
 export * from './arc';
+export * from './ellipse';
