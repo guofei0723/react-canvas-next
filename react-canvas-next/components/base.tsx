@@ -13,7 +13,7 @@ export interface CellProps {
   type: string;
   x?: number;
   y?: number;
-  fill?: CSSProperties['color'] | CanvasGradient | CanvasPattern;
+  fill?: CSSProperties['color'] | CanvasGradient | CanvasPattern | null;
   fillRule?: CanvasFillRule;
   stroke?: CSSProperties['color'] | CanvasGradient | CanvasPattern;
   lineWidth?: number;

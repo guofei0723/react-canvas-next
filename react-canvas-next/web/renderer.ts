@@ -1,4 +1,5 @@
 import { ARC_TYPE, ELLIPSE_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, RECT_TYPE, ShapeModels } from '../components';
+import { ARCTO_TYPE } from '../components/arc-to';
 import { CellId } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
 import { CellStore } from '../core/react-renderer/model';
@@ -124,6 +125,10 @@ export default class Renderer {
     return this.ctx.strokeStyle !== 'transparent' && this.ctx.lineWidth < IGNORE_LINE_WIDTH;
   }
 
+  private shouldFillColor() {
+    return this.ctx.fillStyle !== 'transparent';
+  }
+
   /**
    * is now in clipPath region
    */
@@ -190,6 +195,8 @@ export default class Renderer {
         const { fill, stroke, lineWidth } = props;
         if (fill) {
           ctx.fillStyle = fill;
+        } else if (fill === null) {
+          ctx.fillStyle = 'transparent';
         }
         if (stroke) {
           ctx.strokeStyle = stroke;
@@ -232,6 +239,17 @@ export default class Renderer {
           ctx.ellipse(0, 0, props.rx, props.ry, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
           break;
         }
+        case ARCTO_TYPE: {
+          if (!this.inPathMode() || props.x !== undefined || props.y !== undefined) {
+            ctx.moveTo(0, 0);
+          }
+          /**
+           * Since x and y are already used to move the coordinate system,
+           * the coordinates used here need to be subtracted by the amount of movement
+           */
+          ctx.arcTo(props.x1 - x, props.y1 - y, props.x2 - x, props.y2 - y, props.r);
+          break;
+        }
       }
 
       if (children.length > 0) {
@@ -243,7 +261,9 @@ export default class Renderer {
       }
 
       if (this.shouldPaintShape(type, props)) {
-        ctx.fill(fillRule);
+        if (this.shouldFillColor()) {
+          ctx.fill(fillRule);
+        }
         if (this.shouldDrawStroke()) {
           ctx.stroke();
         }

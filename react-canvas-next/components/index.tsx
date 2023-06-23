@@ -6,3 +6,4 @@ export * from './circle';
 export * from './path';
 export * from './arc';
 export * from './ellipse';
+export * from './arc-to';
