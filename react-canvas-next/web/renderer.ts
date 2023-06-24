@@ -1,4 +1,4 @@
-import { ARC_TYPE, ELLIPSE_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, RECT_TYPE, ShapeModels } from '../components';
+import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, RECT_TYPE, ShapeModels } from '../components';
 import { ARCTO_TYPE } from '../components/arc-to';
 import { CellId } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
@@ -240,14 +240,17 @@ export default class Renderer {
           break;
         }
         case ARCTO_TYPE: {
-          if (!this.inPathMode() || props.x !== undefined || props.y !== undefined) {
-            ctx.moveTo(0, 0);
-          }
+          this.tryBeginSubPath(props);
           /**
            * Since x and y are already used to move the coordinate system,
            * the coordinates used here need to be subtracted by the amount of movement
            */
           ctx.arcTo(props.x1 - x, props.y1 - y, props.x2 - x, props.y2 - y, props.r);
+          break;
+        }
+        case BEZIERCURVE_TYPE: {
+          this.tryBeginSubPath(props);
+          ctx.bezierCurveTo(props.cp1x - x, props.cp1y - y, props.cp2x - x, props.cp2y - y, props.endx - x, props.endy - y);
           break;
         }
       }
@@ -276,6 +279,12 @@ export default class Renderer {
         ctx.clip(props.fillRule);
       }
     })
+  }
+
+  private tryBeginSubPath(props: ShapeModels['props']) {
+    if (!this.inPathMode() || props.x !== undefined || props.y !== undefined) {
+      this.ctx.moveTo(0, 0);
+    }
   }
 
   private shouldPaintShape(type: ShapeModels['type'], props: ShapeModels['props']) {
