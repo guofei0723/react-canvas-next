@@ -154,6 +154,7 @@ export default class Renderer {
     this.updateDimension();
     // disable stroke by default
     ctx.strokeStyle = 'transparent';
+    ctx.fillStyle = 'transparent';
 
     this.paintCells(this.root.data.cellIds);
     ctx.restore();
@@ -182,27 +183,66 @@ export default class Renderer {
       
       // 基础设置，位置、旋转、缩放，颜色，边
       const { x = 0, y = 0, fillRule } = props;
-      ctx.translate(x, y);
 
-      /**
-       * 当前在路径内部时无需不能再开始新路径
-       */
-      if (!this.inPathMode()) {
-        ctx.beginPath();
+      // group translate
+      if (type === GROUP_TYPE) {
+        ctx.translate(x, y);
       }
+
+      // /**
+      //  * 当前在路径内部时无需不能再开始新路径
+      //  */
+      // if (!this.inPathMode()) {
+      //   ctx.beginPath();
+      // }
 
       if (!this.inPathMode()) {
         const { fill, stroke, lineWidth } = props;
         if (fill) {
           ctx.fillStyle = fill;
-        } else if (fill === null) {
-          ctx.fillStyle = 'transparent';
         }
+
         if (stroke) {
           ctx.strokeStyle = stroke;
         }
+
         if (typeof lineWidth === 'number') {
           ctx.lineWidth = (lineWidth <= 0 || lineWidth === Infinity || isNaN(lineWidth)) ? IGNORE_LINE_WIDTH : lineWidth;
+        }
+
+        ctx.beginPath();
+      }
+
+      // call moveTo(), begin a new sub-path
+      if (type !== GROUP_TYPE && (props.x !== undefined || props.y !== undefined)) {
+        ctx.moveTo(x, y);
+      }
+
+      switch (type) {
+        case RECT_TYPE: {
+          const { width, height } = props;
+          ctx.rect(x, y, width, height);
+          break;
+        }
+        case CIRCLE_TYPE: {
+          ctx.arc(props.cx, props.cy, props.r, 0, 2 * Math.PI);
+          break;
+        }
+        case ARC_TYPE: {
+          ctx.arc(props.cx, props.cy, props.r, props.startAngle, props.endAngle, props.counterclockwise);
+          break;
+        }
+        case ELLIPSE_TYPE: {
+          ctx.ellipse(props.cx, props.cy, props.rx, props.ry, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
+          break;
+        }
+        case ARCTO_TYPE: {
+          ctx.arcTo(props.x1, props.y1, props.x2, props.y2, props.r);
+          break;
+        }
+        case BEZIERCURVE_TYPE: {
+          ctx.bezierCurveTo(props.cp1x, props.cp1y, props.cp2x, props.cp2y, props.endx, props.endy);
+          break;
         }
       }
 
@@ -211,56 +251,16 @@ export default class Renderer {
         this._pathCount += 1;
       }
 
-      // // 按类型渲染
-      // if (type === RECT_TYPE) {
-      //   const { width, height } = props;
-      //   ctx.rect(0, 0, width, height);
-      // }
-
-      // if (type === CIRCLE_TYPE) {
-      //   ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
-      // }
-
-      switch (type) {
-        case RECT_TYPE: {
-          const { width, height } = props;
-          ctx.rect(0, 0, width, height);
-          break;
-        }
-        case CIRCLE_TYPE: {
-          ctx.arc(0, 0, props.r, 0, 2 * Math.PI);
-          break;
-        }
-        case ARC_TYPE: {
-          ctx.arc(0, 0, props.r, props.startAngle, props.endAngle, props.counterclockwise);
-          break;
-        }
-        case ELLIPSE_TYPE: {
-          ctx.ellipse(0, 0, props.rx, props.ry, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
-          break;
-        }
-        case ARCTO_TYPE: {
-          this.tryBeginSubPath(props);
-          /**
-           * Since x and y are already used to move the coordinate system,
-           * the coordinates used here need to be subtracted by the amount of movement
-           */
-          ctx.arcTo(props.x1 - x, props.y1 - y, props.x2 - x, props.y2 - y, props.r);
-          break;
-        }
-        case BEZIERCURVE_TYPE: {
-          this.tryBeginSubPath(props);
-          ctx.bezierCurveTo(props.cp1x - x, props.cp1y - y, props.cp2x - x, props.cp2y - y, props.endx - x, props.endy - y);
-          break;
-        }
-      }
-
       if (children.length > 0) {
         this.paintCells(children)
       }
 
       if (type === PATH_TYPE) {
         this._pathCount -= 1;
+      }
+
+      if (props.close) {
+        ctx.closePath();
       }
 
       if (this.shouldPaintShape(type, props)) {
@@ -279,12 +279,6 @@ export default class Renderer {
         ctx.clip(props.fillRule);
       }
     })
-  }
-
-  private tryBeginSubPath(props: ShapeModels['props']) {
-    if (!this.inPathMode() || props.x !== undefined || props.y !== undefined) {
-      this.ctx.moveTo(0, 0);
-    }
   }
 
   private shouldPaintShape(type: ShapeModels['type'], props: ShapeModels['props']) {

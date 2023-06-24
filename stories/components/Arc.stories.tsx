@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Canvas, ArcTo, Circle } from 'react-canvas-next';
+import { Canvas, Arc } from 'react-canvas-next';
 
-const meta: Meta<typeof ArcTo> = {
-  component: ArcTo,
+const meta: Meta<typeof Arc> = {
+  component: Arc,
   tags: ['autodocs'],
   decorators: [
     (Story) => {
@@ -17,17 +17,15 @@ const meta: Meta<typeof ArcTo> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ArcTo>;
+type Story = StoryObj<typeof Arc>;
 
 export const Basic: Story = {
   args: {
-    x: 200,
-    y: 20,
-    x1: 200,
-    y1: 130,
-    x2: 50,
-    y2: 20,
-    r: 40,
-    stroke: 'darkcyan',
+    cx: 200,
+    cy: 150,
+    r: 50,
+    startAngle: 0,
+    endAngle: 5, // Math.PI * x
+    fill: 'steelblue',
   }
 };

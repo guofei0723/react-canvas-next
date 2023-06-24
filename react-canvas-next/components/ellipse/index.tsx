@@ -5,11 +5,11 @@ export interface EllipseProps extends Omit<CellPropsBase, 'children'> {
   /**
    * The x-axis (horizontal) coordinate of the ellipse's center.
    */
-  x?: number;
+  cx: number;
   /**
    * The y-axis (vertical) coordinate of the ellipse's center.
    */
-  y?: number;
+  cy: number;
   /**
    * The ellipse's major-axis radius. Must be non-negative.
    */

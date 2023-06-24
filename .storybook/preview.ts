@@ -21,6 +21,33 @@ const preview: Preview = {
         type: 'color',
       }
     },
+    rotation: {
+      control: {
+        type: 'range',
+        max: 6.28,
+        min: 0,
+        step: 0.01,
+      },
+      if: { arg: 'rotation', exists: true },
+    },
+    startAngle: {
+      control: {
+        type: 'range',
+        max: 6.28,
+        min: 0,
+        step: 0.01,
+      },
+      if: { arg: 'startAngle', exists: true },
+    },
+    endAngle: {
+      control: {
+        type: 'range',
+        max: 6.28,
+        min: 0,
+        step: 0.01,
+      },
+      if: { arg: 'endAngle', exists: true },
+    },
   }
 };
 

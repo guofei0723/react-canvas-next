@@ -3,6 +3,14 @@ import { CELL_TAG, CellModel, CellPropsBase } from '../base'
 
 export interface CircleProps extends Omit<CellPropsBase, 'children'> {
   /**
+   * The horizontal coordinate of the arc's center.
+   */
+  cx: number,
+  /**
+   * The vertical coordinate of the arc's center.
+   */
+  cy: number,
+  /**
    * circle radius
    */
   r: number;
