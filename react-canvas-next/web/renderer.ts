@@ -1,4 +1,4 @@
-import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, RECT_TYPE, ShapeModels } from '../components';
+import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, QUADRATICCURVE_TYPE, RECT_TYPE, ShapeModels } from '../components';
 import { ARCTO_TYPE } from '../components/arc-to';
 import { CellId } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
@@ -242,6 +242,10 @@ export default class Renderer {
         }
         case BEZIERCURVE_TYPE: {
           ctx.bezierCurveTo(props.cp1x, props.cp1y, props.cp2x, props.cp2y, props.endx, props.endy);
+          break;
+        }
+        case QUADRATICCURVE_TYPE: {
+          ctx.quadraticCurveTo(props.cpX, props.cpY, props.endX, props.endY);
           break;
         }
       }

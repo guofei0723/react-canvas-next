@@ -6,6 +6,7 @@ import { ClipPathModel } from './clippath';
 import { EllipseModel } from './ellipse';
 import { GroupModel } from './group';
 import { PathModel } from './path';
+import { QuadraticCurveModel } from './quadratic-curve';
 import { RectModel } from './rect';
 
 
@@ -18,4 +19,5 @@ export type ShapeModels = RectModel
   | EllipseModel
   | ArcToModel
   | BezierCurveModel
+  | QuadraticCurveModel
   ;

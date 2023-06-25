@@ -8,3 +8,4 @@ export * from './arc';
 export * from './ellipse';
 export * from './arc-to';
 export * from './bezier-curve';
+export * from './quadratic-curve';
