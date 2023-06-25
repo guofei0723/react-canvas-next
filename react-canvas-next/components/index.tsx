@@ -9,3 +9,4 @@ export * from './ellipse';
 export * from './arc-to';
 export * from './bezier-curve';
 export * from './quadratic-curve';
+export * from './line';

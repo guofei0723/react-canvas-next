@@ -1,6 +1,6 @@
-import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, PATH_TYPE, PathProps, QUADRATICCURVE_TYPE, RECT_TYPE, ShapeModels } from '../components';
+import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_TYPE, PathProps, QUADRATICCURVE_TYPE, RECT_TYPE, ShapeModels } from '../components';
 import { ARCTO_TYPE } from '../components/arc-to';
-import { CellId } from '../components/base';
+import { CellId, CellProps } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
 import { CellStore } from '../core/react-renderer/model';
 import Root from '../core/react-renderer/root';
@@ -182,7 +182,7 @@ export default class Renderer {
       ctx.save();
       
       // 基础设置，位置、旋转、缩放，颜色，边
-      const { x = 0, y = 0, fillRule } = props;
+      const { x = 0, y = 0, fillRule, close: closePath } = props as CellProps;
 
       // group translate
       if (type === GROUP_TYPE) {
@@ -197,7 +197,7 @@ export default class Renderer {
       // }
 
       if (!this.inPathMode()) {
-        const { fill, stroke, lineWidth } = props;
+        const { fill, stroke, lineWidth } = props as CellProps;
         if (fill) {
           ctx.fillStyle = fill;
         }
@@ -248,6 +248,10 @@ export default class Renderer {
           ctx.quadraticCurveTo(props.cpX, props.cpY, props.endX, props.endY);
           break;
         }
+        case LINE_TYPE: {
+          ctx.lineTo(props.endX, props.endY);
+          break;
+        }
       }
 
       if (type === PATH_TYPE) {
@@ -263,7 +267,7 @@ export default class Renderer {
         this._pathCount -= 1;
       }
 
-      if (props.close) {
+      if (closePath) {
         ctx.closePath();
       }
 
