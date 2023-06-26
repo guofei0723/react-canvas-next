@@ -10,3 +10,4 @@ export * from './arc-to';
 export * from './bezier-curve';
 export * from './quadratic-curve';
 export * from './line';
+export * from './polygon';

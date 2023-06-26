@@ -7,6 +7,7 @@ import { EllipseModel } from './ellipse';
 import { GroupModel } from './group';
 import { LineModel } from './line';
 import { PathModel } from './path';
+import { PolygonModel } from './polygon';
 import { QuadraticCurveModel } from './quadratic-curve';
 import { RectModel } from './rect';
 
@@ -22,4 +23,5 @@ export type ShapeModels = RectModel
   | BezierCurveModel
   | QuadraticCurveModel
   | LineModel
+  | PolygonModel
   ;

@@ -2,6 +2,7 @@ import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_T
 import { ARCTO_TYPE } from '../components/arc-to';
 import { CellId, CellProps } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
+import { POLYGON_TYPE } from '../components/polygon';
 import { CellStore } from '../core/react-renderer/model';
 import Root from '../core/react-renderer/root';
 
@@ -250,6 +251,13 @@ export default class Renderer {
         }
         case LINE_TYPE: {
           ctx.lineTo(props.endX, props.endY);
+          break;
+        }
+        case POLYGON_TYPE: {
+          const { points } = props;
+          for (let i = 0; i < points.length; i+=2) {
+            ctx.lineTo(points[i], points[i + 1] || 0);
+          }
           break;
         }
       }
