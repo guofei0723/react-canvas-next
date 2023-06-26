@@ -5,11 +5,11 @@ export interface CircleProps extends Omit<CellPropsBase, 'children'> {
   /**
    * The horizontal coordinate of the arc's center.
    */
-  cx: number,
+  cX: number,
   /**
    * The vertical coordinate of the arc's center.
    */
-  cy: number,
+  cY: number,
   /**
    * circle radius
    */

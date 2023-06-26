@@ -13,19 +13,19 @@ export interface ArcToProps extends Omit<CellPropsBase, 'children'> {
   /**
    * The x-axis coordinate of the first control point.
    */
-  x1: number;
+  cp1X: number;
   /**
    * The y-axis coordinate of the first control point.
    */
-  y1: number;
+  cp1Y: number;
   /**
    * The x-axis coordinate of the second control point.
    */
-  x2: number;
+  cp2X: number;
   /**
    * The y-axis coordinate of the second control point.
    */
-  y2: number;
+  cp2Y: number;
   /**
    * The arc's radius. Must be non-negative.
    */

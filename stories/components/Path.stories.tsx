@@ -28,8 +28,8 @@ export const Basic: Story = {
   render: (props) => {
     return (
       <Path {...props}>
-        <Arc cx={100} cy={100} r={30} startAngle={Math.PI} endAngle={Math.PI / 2} counterclockwise />
-        <Arc cx={200} cy={100} r={30} startAngle={Math.PI / 2} endAngle={0} counterclockwise />
+        <Arc cX={100} cY={100} r={30} startAngle={Math.PI} endAngle={Math.PI / 2} counterclockwise />
+        <Arc cX={200} cY={100} r={30} startAngle={Math.PI / 2} endAngle={0} counterclockwise />
       </Path>
     )
   }
@@ -43,8 +43,8 @@ export const ClipPath: Story = {
     return (
       <Group>
         <Path {...props}>
-          <Arc cx={100} cy={100} r={30} startAngle={Math.PI} endAngle={Math.PI / 2} counterclockwise />
-          <Arc cx={200} cy={100} r={30} startAngle={Math.PI / 2} endAngle={0} counterclockwise />
+          <Arc cX={100} cY={100} r={30} startAngle={Math.PI} endAngle={Math.PI / 2} counterclockwise />
+          <Arc cX={200} cY={100} r={30} startAngle={Math.PI / 2} endAngle={0} counterclockwise />
         </Path>
         {/* <Path d='M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z' /> */}
         <Rect width={800} height={500} fill={'papayawhip'} />

@@ -13,27 +13,27 @@ export interface BezierCurveProps extends Omit<CellPropsBase, 'children'> {
   /**
    * The x-axis coordinate of the first control point.
    */
-  cp1x: number;
+  cp1X: number;
   /**
    * The y-axis coordinate of the first control point.
    */
-  cp1y: number;
+  cp1Y: number;
   /**
    * The x-axis coordinate of the second control point.
    */
-  cp2x: number;
+  cp2X: number;
   /**
    * The y-axis coordinate of the second control point.
    */
-  cp2y: number;
+  cp2Y: number;
   /**
    * The x-axis coordinate of the end point.
    */
-  endx: number;
+  endX: number;
   /**
    * The y-axis coordinate of the end point.
    */
-  endy: number;
+  endY: number;
 }
 
 export const BEZIERCURVE_TYPE = 'beziercurve';

@@ -27,7 +27,7 @@ export const Basic: Story = {
           <Rect x={30} width={25} height={25} />
           <Rect x={10} y={10} width={25} height={25} fill='yellow' />
         </Group>
-        <Circle cx={360} cy={60} r={40} fill='green' lineWidth={0} />
+        <Circle cX={360} cY={60} r={40} fill='green' lineWidth={0} />
       </Canvas>
     )
   }
@@ -41,8 +41,8 @@ const rectProps = {
 };
 
 const circleProps = {
-  cx: 400,
-  cy: 400,
+  cX: 400,
+  cY: 400,
   r: 150,
 };
 
@@ -58,8 +58,8 @@ export const ViewBox: StoryObj<React.FC<CanvasProps & { rectProps: typeof rectPr
       height: 400,
     },
     circleProps: {
-      cx: 400,
-      cy: 400,
+      cX: 400,
+      cY: 400,
       r: 150,
     }
   },
@@ -94,7 +94,7 @@ export const PreserveAspectRatio: Story = {
         <Rect x={viewW / 2} y={0} width={viewW / 2} height={viewH / 2} fill='red' />
         <Rect x={0} y={viewH / 2} width={viewW / 2} height={viewH / 2} fill='green' />
         <Rect x={viewW / 2} y={viewH / 2} width={viewW / 2} height={viewH / 2} fill='blue' />
-        <Circle cx={viewW / 2} cy={0} r={50} fill='steelblue' />
+        <Circle cX={viewW / 2} cY={0} r={50} fill='steelblue' />
       </Canvas>
     )
   }

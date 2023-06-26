@@ -21,8 +21,8 @@ type Story = StoryObj<typeof Circle>;
 
 export const Basic: Story = {
   args: {
-    cx: 200,
-    cy: 150,
+    cX: 200,
+    cY: 150,
     r: 50,
     fill: 'steelblue',
   }

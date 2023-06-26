@@ -225,23 +225,23 @@ export default class Renderer {
           break;
         }
         case CIRCLE_TYPE: {
-          ctx.arc(props.cx, props.cy, props.r, 0, 2 * Math.PI);
+          ctx.arc(props.cX, props.cY, props.r, 0, 2 * Math.PI);
           break;
         }
         case ARC_TYPE: {
-          ctx.arc(props.cx, props.cy, props.r, props.startAngle, props.endAngle, props.counterclockwise);
+          ctx.arc(props.cX, props.cY, props.r, props.startAngle, props.endAngle, props.counterclockwise);
           break;
         }
         case ELLIPSE_TYPE: {
-          ctx.ellipse(props.cx, props.cy, props.rx, props.ry, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
+          ctx.ellipse(props.cX, props.cY, props.rX, props.rY, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
           break;
         }
         case ARCTO_TYPE: {
-          ctx.arcTo(props.x1, props.y1, props.x2, props.y2, props.r);
+          ctx.arcTo(props.cp1X, props.cp1Y, props.cp2X, props.cp2Y, props.r);
           break;
         }
         case BEZIERCURVE_TYPE: {
-          ctx.bezierCurveTo(props.cp1x, props.cp1y, props.cp2x, props.cp2y, props.endx, props.endy);
+          ctx.bezierCurveTo(props.cp1X, props.cp1Y, props.cp2X, props.cp2Y, props.endX, props.endY);
           break;
         }
         case QUADRATICCURVE_TYPE: {

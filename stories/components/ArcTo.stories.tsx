@@ -23,10 +23,10 @@ export const Basic: Story = {
   args: {
     x: 200,
     y: 20,
-    x1: 200,
-    y1: 130,
-    x2: 50,
-    y2: 20,
+    cp1X: 200,
+    cp1Y: 130,
+    cp2X: 50,
+    cp2Y: 20,
     r: 40,
     stroke: 'darkcyan',
   }
