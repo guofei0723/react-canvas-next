@@ -6,7 +6,7 @@ export * from './circle';
 export * from './path';
 export * from './arc';
 export * from './ellipse';
-export * from './arc-to';
+export * from './arc-curve';
 export * from './bezier-curve';
 export * from './quadratic-curve';
 export * from './line';

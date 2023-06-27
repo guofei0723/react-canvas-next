@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { CELL_TAG, CellModel, CellPropsBase } from '../base'
 
-export interface ArcToProps extends Omit<CellPropsBase, 'children'> {
+export interface ArcCurveProps extends Omit<CellPropsBase, 'children'> {
   /**
    * The x-axis coordinate of the starting point.
    */
@@ -32,10 +32,10 @@ export interface ArcToProps extends Omit<CellPropsBase, 'children'> {
   r: number;
 }
 
-export const ARCTO_TYPE = 'arcto';
+export const ARCCURVE_TYPE = 'arcto';
 
-export interface ArcToModel extends CellModel<ArcToProps> {
-  type: typeof ARCTO_TYPE,
+export interface ArcCurveModel extends CellModel<ArcCurveProps> {
+  type: typeof ARCCURVE_TYPE,
 }
 
 /**
@@ -44,8 +44,8 @@ export interface ArcToModel extends CellModel<ArcToProps> {
  * If starting point (x, y) are set, will begin a new sub-path.  
  * The starting point cannot be the same as the first control point
  */
-export const ArcTo: FC<ArcToProps> = (props) => {
+export const ArcCurve: FC<ArcCurveProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={ARCTO_TYPE} />
+    <CELL_TAG {...props} type={ARCCURVE_TYPE} />
   )
 };

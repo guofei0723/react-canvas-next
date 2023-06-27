@@ -1,5 +1,5 @@
 import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_TYPE, PathProps, QUADRATICCURVE_TYPE, RECT_TYPE, ShapeModels } from '../components';
-import { ARCTO_TYPE } from '../components/arc-to';
+import { ARCCURVE_TYPE } from '../components/arc-curve';
 import { CellId, CellProps } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
 import { POLYGON_TYPE } from '../components/polygon';
@@ -237,7 +237,7 @@ export default class Renderer {
           ctx.ellipse(props.cX, props.cY, props.rX, props.rY, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
           break;
         }
-        case ARCTO_TYPE: {
+        case ARCCURVE_TYPE: {
           ctx.arcTo(props.cp1X, props.cp1Y, props.cp2X, props.cp2Y, props.r);
           break;
         }

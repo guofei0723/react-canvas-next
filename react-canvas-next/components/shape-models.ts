@@ -1,5 +1,5 @@
 import { ArcModel } from './arc';
-import { ArcToModel } from './arc-to';
+import { ArcCurveModel } from './arc-curve';
 import { BezierCurveModel } from './bezier-curve';
 import { CircleModel } from './circle';
 import { ClipPathModel } from './clippath';
@@ -19,7 +19,7 @@ export type ShapeModels = RectModel
   | PathModel
   | ArcModel
   | EllipseModel
-  | ArcToModel
+  | ArcCurveModel
   | BezierCurveModel
   | QuadraticCurveModel
   | LineModel
