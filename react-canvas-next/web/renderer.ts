@@ -215,7 +215,7 @@ export default class Renderer {
       }
 
       // call moveTo(), begin a new sub-path
-      if (type !== GROUP_TYPE && (props.x !== undefined || props.y !== undefined)) {
+      if (type !== GROUP_TYPE && ((props as CellProps).x !== undefined || (props as CellProps).y !== undefined)) {
         ctx.moveTo(x, y);
       }
 

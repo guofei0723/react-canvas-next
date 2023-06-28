@@ -4,9 +4,10 @@ import { Canvas, Line } from 'react-canvas-next';
 const meta: Meta<typeof Line> = {
   component: Line,
   tags: ['autodocs'],
-  argTypes: {
-    // @ts-ignore
-    fill: { table: { disable: true } }
+  parameters: {
+    controls: {
+      exclude: ['fill'],
+    }
   },
   decorators: [
     (Story) => {

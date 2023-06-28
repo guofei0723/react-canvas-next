@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { CELL_TAG, CellModel, CellPropsBase } from '../base'
 
-export interface CircleProps extends Omit<CellPropsBase, 'children'> {
+export interface CircleProps extends Omit<CellPropsBase, 'children' | 'x' | 'y'> {
   /**
    * The horizontal coordinate of the arc's center.
    */
@@ -24,6 +24,6 @@ export interface CircleModel extends CellModel<CircleProps> {
 
 export const Circle: FC<CircleProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={CIRCLE_TYPE} />
+    <CELL_TAG {...props} x={props.cX + props.r} y={props.cY} type={CIRCLE_TYPE} />
   )
 };
