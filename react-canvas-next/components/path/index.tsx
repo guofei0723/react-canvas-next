@@ -19,11 +19,17 @@ export interface PathModel extends CellModel<PathProps> {
   type: typeof PATH_TYPE,
 }
 
-export const Path: FC<PathProps> = (props) => {
-  if (props.d) {
-    console.log('path d:', parsePathD(props.d));
-  }
+export const Path: FC<PathProps> = ({
+  d,
+  children,
+  ...props
+}) => {
+  const comps = d ? parsePathD(d) : null;
+  const nodes = comps?.map(({ c: Comp, p: compProps }, i) => (<Comp key={i} {...compProps} />))
+
   return (
-    <CELL_TAG {...props} type={PATH_TYPE} />
+    <CELL_TAG {...props} type={PATH_TYPE}>
+      {nodes || children}
+    </CELL_TAG>
   )
 };

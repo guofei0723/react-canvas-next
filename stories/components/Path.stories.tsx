@@ -38,23 +38,27 @@ export const Basic: Story = {
 export const ClipPath: Story = {
   args: {
     asClip: true,
+    fill: 'steelblue',
   },
   render: (props) => {
     return (
       <Group>
         <Path {...props}>
-          <Arc cX={100} cY={100} r={30} startAngle={Math.PI} endAngle={Math.PI / 2} counterclockwise />
-          <Arc cX={200} cY={100} r={30} startAngle={Math.PI / 2} endAngle={0} counterclockwise />
+          {/* <Arc cX={100} cY={100} r={30} startAngle={Math.PI} endAngle={Math.PI / 2} counterclockwise />
+          <Arc cX={200} cY={100} r={30} startAngle={Math.PI / 2} endAngle={0} counterclockwise /> */}
+          <Circle cX={40} cY={35} r={35} />
         </Path>
-        {/* <Path d='M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z' /> */}
-        <Rect width={800} height={500} fill={'papayawhip'} />
+        <Path d='M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z' fill='rgba(255, 0, 0, 0.7)' />
+        {/* <Rect width={800} height={500} fill={'papayawhip'} /> */}
       </Group>
     )
   }
 }
 
 export const D: Story = {
+  name: 'd - Heart',
   args: {
+    fill: 'red',
     d: `M 10,30
     A 20,20 0,0,1 50,30
     A 20,20 0,0,1 90,30

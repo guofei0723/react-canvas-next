@@ -27,11 +27,12 @@ function assertLength (params: number[], l: number, d: string) {
 }
 
 type CmdInfos = { cmd: string, params: number[] };
+type CompInfo = { c: React.FC<any>, p: any };
 
 /**
  * parse path d attribute
  */
-export function parsePathD(d: string): CmdInfos[] {
+export function parsePathD(d: string): CompInfo[] {
   const cmdRegEx = /([MLQTCSAZVH])([^MLQTCSAZVH]*)/ig;
   const commands = d.match(cmdRegEx);
 
@@ -43,6 +44,9 @@ export function parsePathD(d: string): CmdInfos[] {
   // prev direction position
   const prevPos = { x: 0, y: 0 };
   const prevCmd = { d: '', params: [] as number[] };
+  // the shape components
+  const comps: Array<{ c: React.FC<any>, p: any}> = [];
+  let compBeginPos: PointLike | null = null;
 
   const directs = commands?.map((cmd) => {
     const arr = cmd.match(paramRegEx);
@@ -83,6 +87,8 @@ export function parsePathD(d: string): CmdInfos[] {
         copyXY(params, prevPos);
         subPathBegin.x = params[0];
         subPathBegin.y = params[1];
+
+        compBeginPos = { ...subPathBegin };
         
         return { cmd: 'moveTo', params };
       }
@@ -99,6 +105,21 @@ export function parsePathD(d: string): CmdInfos[] {
         assertLength(params, 2, d);
         copyXY(params, prevPos);
 
+        const props = {
+          ...compBeginPos,
+          endX: prevPos.x,
+          endY: prevPos.y,
+        }
+
+        comps.push({
+          c: Line,
+          p: props,
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
+
         return { cmd: 'lineTo', params};
       }
       // case 'l': {
@@ -112,6 +133,21 @@ export function parsePathD(d: string): CmdInfos[] {
         assertLength(params, 1, d);
         prevPos.x = params[0];
 
+        const props = {
+          ...compBeginPos,
+          endX: prevPos.x,
+          endY: prevPos.y,
+        }
+
+        comps.push({
+          c: Line,
+          p: props,
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
+
         return { cmd: 'lineTo', params: [prevPos.x, prevPos.y] }
       }
       // case 'h': {
@@ -124,6 +160,21 @@ export function parsePathD(d: string): CmdInfos[] {
       case 'V': {
         assertLength(params, 1, d);
         prevPos.y = params[0];
+
+        const props = {
+          ...compBeginPos,
+          endX: prevPos.x,
+          endY: prevPos.y,
+        }
+
+        comps.push({
+          c: Line,
+          p: props,
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
 
         return { cmd: 'lineTo', params: [prevPos.x, prevPos.y] }
       }
@@ -139,12 +190,29 @@ export function parsePathD(d: string): CmdInfos[] {
         prevPos.x = subPathBegin.x;
         prevPos.y = subPathBegin.y;
 
+        if (comps.length > 0) {
+          comps[comps.length - 1].p.close = true;
+        }
+
         return { cmd: 'closePath', params }
       }
 
       case 'C': {
         assertLength(params, 6, d);
         copyXY(params, prevPos);
+
+        const [cp1X, cp1Y, cp2X, cp2Y, endX, endY] = params;
+        comps.push({
+          c: BezierCurve,
+          p: {
+            ...compBeginPos,
+            cp1X, cp1Y, cp2X, cp2Y, endX, endY,
+          }
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
 
         return { cmd: 'bezierCurveTo', params };
       }
@@ -159,12 +227,41 @@ export function parsePathD(d: string): CmdInfos[] {
         const [c2x, c2y, ex, ey] = prevCmd.params.slice(2, 6);
         const cp1 = rotatePi(c2x, c2y, ex, ey);
 
+        const [cp1X, cp1Y] = cp1;
+        const [cp2X, cp2Y, endX, endY] = params;
+
+        comps.push({
+          c: BezierCurve,
+          p: {
+            ...compBeginPos,
+            cp1X, cp1Y, cp2X, cp2Y, endX, endY,
+          }
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
+
         return { cmd: 'bezierCurveTo', params: [...cp1, ...params]};
       }
 
       case 'Q': {
         assertLength(params, 4, d);
         copyXY(params, prevPos);
+
+        const [cpX, cpY, endX, endY] = params;
+
+        comps.push({
+          c: QuadraticCurve,
+          p: {
+            ...compBeginPos,
+            cpX, cpY, endX, endY,
+          }
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
 
         return { cmd: 'quadraticCurveTo', params }
       }
@@ -178,24 +275,63 @@ export function parsePathD(d: string): CmdInfos[] {
 
         const [cpx, cpy, ex, ey] = prevCmd.params;
         const cp = rotatePi(cpx, cpy, ex, ey);
+
+        const [cpX, cpY] = cp;
+        const [endX, endY] = params;
+
+        comps.push({
+          c: QuadraticCurve,
+          p: {
+            ...compBeginPos,
+            cpX, cpY, endX, endY,
+          }
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
         return { cmd: 'quadraticCurveTo', params: [...cp, ...params] };
       }
 
       case 'A': {
         assertLength(params, 7, d);
-        const [rx, ry, angle, largeArcFlg, sweepFlag, endX, endY] = params;
+        const [rX, rY, angle, largeArcFlg, sweepFlag, endX, endY] = params;
 
-        if (rx <= 0 || ry <= 0) {
+        if (rX <= 0 || rY <= 0) {
+          comps.push({
+            c: Line,
+            p: {
+              ...compBeginPos,
+              endX, endY,
+            }
+          });
+
+          if (compBeginPos) {
+            compBeginPos = null;
+          }
           return { cmd: 'lineTo', params: [endX, endY] };
         }
 
         const rotation = angle * Math.PI / 180;
 
-        const { cx, cy, startAngle, endAngle, clockwise } = svgArcToCenterParam(prevPos.x, prevPos.y, rx, ry, rotation, largeArcFlg, sweepFlag, endX, endY);
+        const { cx: cX, cy: cY, startAngle, endAngle, clockwise } = svgArcToCenterParam(prevPos.x, prevPos.y, rX, rY, rotation, largeArcFlg, sweepFlag, endX, endY);
         prevPos.x = endX;
         prevPos.y = endY;
 
-        return { cmd: 'ellipse', params: [cx, cy, rx, ry, rotation, startAngle, endAngle, !clockwise]}
+        comps.push({
+          c: Ellipse,
+          p: {
+            ...compBeginPos,
+            counterclockwise: !clockwise,
+            cX, cY, rX, rY, rotation, startAngle, endAngle,
+          }
+        });
+
+        if (compBeginPos) {
+          compBeginPos = null;
+        }
+
+        return { cmd: 'ellipse', params: [cX, cY, rX, rY, rotation, startAngle, endAngle, !clockwise]}
       }
 
       default: {
@@ -204,7 +340,8 @@ export function parsePathD(d: string): CmdInfos[] {
     }
   });
 
-  return directs?.filter(d => d) as CmdInfos[];
+  return comps;
+  // return directs?.filter(d => d) as CmdInfos[];
 }
 
 // const compMap = {

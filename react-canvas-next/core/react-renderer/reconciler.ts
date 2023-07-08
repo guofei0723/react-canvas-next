@@ -133,6 +133,7 @@ export const hostConfig: HostConfig<
     return null;
   },
   detachDeletedInstance: function (node: Instance): void {
+    console.log('detachDeletedInstance:', node);
     console.error("Function not implemented.");
   },
   createContainerChildSet(container): ChildSet {
