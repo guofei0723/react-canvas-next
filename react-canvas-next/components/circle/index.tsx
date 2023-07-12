@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface CircleProps extends Omit<CellPropsBase, 'children' | 'x' | 'y'> {
   /**
@@ -24,6 +24,6 @@ export interface CircleModel extends CellModel<CircleProps> {
 
 export const Circle: FC<CircleProps> = (props) => {
   return (
-    <CELL_TAG {...props} x={props.cX + props.r} y={props.cY} type={CIRCLE_TYPE} />
+    <Cell {...props} x={props.cX + props.r} y={props.cY} type={CIRCLE_TYPE} />
   )
 };

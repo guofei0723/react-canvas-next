@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface ArcProps extends Omit<CellPropsBase, 'children'> {
   /**
@@ -41,6 +41,6 @@ export interface ArcModel extends CellModel<ArcProps> {
  */
 export const Arc: FC<ArcProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={ARC_TYPE} />
+    <Cell  {...props} type={ARC_TYPE} />
   )
 };

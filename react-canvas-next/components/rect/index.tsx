@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface RectProps extends Omit<CellPropsBase, 'children'> {
   width: number;
@@ -14,6 +14,6 @@ export interface RectModel extends CellModel<RectProps> {
 
 export const Rect: FC<RectProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={RECT_TYPE} />
+    <Cell {...props} type={RECT_TYPE} />
   )
 };

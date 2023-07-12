@@ -2,6 +2,7 @@ import Reconciler, { Fiber, HostConfig } from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants';
 import { CellStore } from './model';
 import { deepCompare } from '../../utils';
+import { ShapeModels } from '@/react-canvas-next/components';
 
 export type DataStore = {
   data: CellStore;
@@ -11,7 +12,7 @@ export type DataStore = {
 type Type = string;
 type Props = { [key: string]: any };
 type Container = DataStore; // RendererModel;
-type Instance = any; //  Cell;
+type Instance = ShapeModels;
 type TextInstance = string;
 
 type SuspenseInstance = any;
@@ -19,7 +20,7 @@ type HydratableInstance = any;
 type PublicInstance = any;
 type HostContext = any;
 type UpdatePayload = any;
-type ChildSet = any; // RendererModel;
+type ChildSet = ShapeModels[]; // RendererModel;
 type TimeoutHandle = any;
 type NoTimeout = number | undefined;
 
@@ -44,39 +45,28 @@ export const hostConfig: HostConfig<
   noTimeout: undefined,
   isPrimaryRenderer: false,
   createInstance: function (_tagType: string, props: Props, rootContainer: Container, hostContext: any, internalHandle: any): Instance {
+    console.log('createInstance:', { _tagType, props, rootContainer, hostContext, internalHandle });
     const { children, type: cellType, ...instanceProps } = props;
-  
+
     const obj = {
-      id: `${Math.random()}`,
+      id: props.cellId,
       type: cellType,
       props: instanceProps,
       children: [],
     };
 
-    return {
-      cellId: obj.id,
-      entities: {
-        [obj.id]: obj,
-      }
-    }
+    return obj;
   },
   createTextInstance: function (text: string, rootContainer: Container, hostContext: any, internalHandle: any): TextInstance {
     console.error("Function not implemented.");
     return text;
   },
-  appendInitialChild: function (parentInstance: Instance, child: Instance): void {
-    const { cellId: parentId, entities } = parentInstance;
-    const { cellId: childId } = child;
-    const parent = entities[parentId];
-    if (!parent.children.includes(childId)) {
-      parent.children.push(childId);
-    }
-    parentInstance.entities = {
-      ...entities,
-      ...child.entities,
-    };
+  appendInitialChild: function (parent: Instance, child: Instance): void {
+    console.log('appendInitialChild:', { parent, child });
+    parent.children.push(child);
   },
   finalizeInitialChildren: function (instance: Instance, type: string, props: Props, rootContainer: Container, hostContext: any): boolean {
+    console.log('finalizeInitialChildren:', { instance, type, props, rootContainer, hostContext })
     return false;
   },
   prepareUpdate: function (instance: Instance, type: string, oldProps: Props, newProps: Props, rootContainer: Container, hostContext: any) {
@@ -89,18 +79,22 @@ export const hostConfig: HostConfig<
     return false;
   },
   getRootHostContext: function (rootContainer: Container) {
+    console.error("Function not implemented.");
     return null;
   },
   getChildHostContext: function (parentHostContext: any, type: string, rootContainer: Container) {
-    return null;
+    console.error("Function not implemented.");
+    return parentHostContext;
   },
   getPublicInstance: function (instance: Instance) {
     return instance;
   },
   prepareForCommit: function (containerInfo: Container): Record<string, any> | null {
+    console.error("Function not implemented.");
     return null;
   },
   resetAfterCommit: function (containerInfo: Container): void {
+    console.error("Function not implemented.");
   },
   preparePortalMount: function (containerInfo: Container): void {
     console.error("Function not implemented.");
@@ -133,51 +127,48 @@ export const hostConfig: HostConfig<
     return null;
   },
   detachDeletedInstance: function (node: Instance): void {
-    console.log('detachDeletedInstance:', node);
+    console.log('detachDeletedInstance:', node, this);
     console.error("Function not implemented.");
   },
   createContainerChildSet(container): ChildSet {
-    console.log('createContainerChildSet:', { ...container.data });
-    return { ...container.data };
+    console.log('createContainerChildSet:', { container });
+    return [];
   },
   appendChildToContainerChildSet(childSet, child: Instance) {
     console.log('appendChildToContainerChildSet:', { childSet, child });
-    const { cellIds, entities } = childSet;
-    childSet.entities = { ...entities, ...child.entities };
-    if (!childSet.cellIds.includes(child.cellId)) {
-      childSet.cellIds = [...cellIds, child.cellId];
-    }
+    childSet.push(child);
   },
   finalizeContainerChildren(container, newChildren) {
     console.log('finalizeContainerChildren:', { container, newChildren });
   },
   replaceContainerChildren(container, newChildren) {
     console.log('replaceContainerChildren:', { container, newChildren });
-    container.data = newChildren;
+    container.data = { cells: newChildren };
     container.updateCanvas();
   },
   cloneInstance(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance) {
     console.log('cloneInstance:', {instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance})
-    const { children: _newChildren, type: newCellType, ...newInstanceProps } = newProps;
-    const { children: _oldChildren, type: oldCellType, ...oldInstanceProps } = oldProps;
+    const { children: newChildren, type: newCellType, ...newInstanceProps } = newProps;
+
+    let newOne = instance;
 
     // 属性有变化
     if (updatePayload) {
-      const obj = {
-        ...instance.entities[instance.cellId],
+      newOne = {
+        ...newOne,
         type: newCellType,
         props: newInstanceProps,
-      };
-      return {
-        ...instance,
-        entities: {
-          ...instance.entities,
-          [instance.cellId]: obj,
-        }
-      };
+      }
     }
 
-    return instance;
+    if (!keepChildren) {
+      newOne = {
+        ...newOne,
+        children: [],
+      }
+    }
+
+    return newOne;
   },
 };
 

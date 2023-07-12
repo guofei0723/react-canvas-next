@@ -1,6 +1,6 @@
 import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_TYPE, PathProps, QUADRATICCURVE_TYPE, RECT_TYPE, ShapeModels } from '../components';
 import { ARCCURVE_TYPE } from '../components/arc-curve';
-import { CellId, CellProps } from '../components/base';
+import { CellProps } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
 import { POLYGON_TYPE } from '../components/polygon';
 import { CellStore } from '../core/react-renderer/model';
@@ -157,7 +157,7 @@ export default class Renderer {
     ctx.strokeStyle = 'transparent';
     ctx.fillStyle = 'transparent';
 
-    this.paintCells(this.root.data.cellIds);
+    this.paintCells(this.root.data.cells);
     ctx.restore();
   }
   
@@ -172,13 +172,13 @@ export default class Renderer {
   /**
    * 递归渲染每个元素
    */
-  private paintCells(cellIds: Array<CellId>) {
-    const { entities } = this.root.data;
+  private paintCells(cells: Array<ShapeModels>) {
+    // const { entities } = this.root.data;
     const { ctx } = this;
 
-    cellIds.forEach((id) => {
-      const { type, props, children } = entities[id];
-      console.log('pating:', entities[id])
+    cells.forEach((cell) => {
+      const { type, props, children } = cell;
+      console.log('pating:', cell)
 
       ctx.save();
       
@@ -268,7 +268,7 @@ export default class Renderer {
       }
 
       if (children.length > 0) {
-        this.paintCells(children)
+        this.paintCells(children as ShapeModels[])
       }
 
       if (type === PATH_TYPE) {

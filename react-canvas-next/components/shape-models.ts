@@ -2,7 +2,7 @@ import { ArcModel } from './arc';
 import { ArcCurveModel } from './arc-curve';
 import { BezierCurveModel } from './bezier-curve';
 import { CircleModel } from './circle';
-import { ClipPathModel } from './clippath';
+// import { ClipPathModel } from './clippath';
 import { EllipseModel } from './ellipse';
 import { GroupModel } from './group';
 import { LineModel } from './line';
@@ -15,7 +15,7 @@ import { RectModel } from './rect';
 export type ShapeModels = RectModel
   | GroupModel
   | CircleModel
-  | ClipPathModel
+  // | ClipPathModel
   | PathModel
   | ArcModel
   | EllipseModel

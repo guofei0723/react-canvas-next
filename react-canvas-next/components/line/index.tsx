@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface LineProps extends Omit<CellPropsBase, 'children' | 'fill' | 'fillRule' | 'close'> {
   /**
@@ -20,6 +20,6 @@ export interface LineModel extends CellModel<LineProps> {
 
 export const Line: FC<LineProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={LINE_TYPE} />
+    <Cell {...props} type={LINE_TYPE} />
   )
 };

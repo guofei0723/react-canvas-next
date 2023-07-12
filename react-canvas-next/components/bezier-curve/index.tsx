@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface BezierCurveProps extends Omit<CellPropsBase, 'children'> {
   /**
@@ -44,6 +44,6 @@ export interface BezierCurveModel extends CellModel<BezierCurveProps> {
 
 export const BezierCurve: FC<BezierCurveProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={BEZIERCURVE_TYPE} />
+    <Cell {...props} type={BEZIERCURVE_TYPE} />
   )
 };

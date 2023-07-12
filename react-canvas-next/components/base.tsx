@@ -1,12 +1,13 @@
-import { CSSProperties, ReactNode } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
+import { makeID } from '../utils';
 
 export type CellId = string;
 
-export interface CellModel<PropsType = CellProps> {
+export interface CellModel<PropsType = Partial<CellProps>> {
   id: CellId;
   type: string;
   props: PropsType;
-  children: CellId[];
+  children: CellModel[];
 }
 
 export interface CellProps {
@@ -31,3 +32,8 @@ export type CellPropsBase = Omit<CellProps, 'type'>;
 export type CellPropsBaseWithoutChildren = Omit<CellPropsBase, 'children'>;
 
 export const CELL_TAG = 'canvasNextEle';
+
+export const Cell: React.FC<CellProps & Record<string, any>> = (props) => {
+  const cellId = useMemo(makeID, []);
+  return <CELL_TAG {...props} cellId={cellId} />
+}

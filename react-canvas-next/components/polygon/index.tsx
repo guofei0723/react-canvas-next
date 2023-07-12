@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface PolygonModelProps extends Omit<CellPropsBase, 'children'> {
   /**
@@ -30,6 +30,6 @@ export const Polygon: FC<PolygonProps> = (props) => {
   const { points } = props;
   const otherPoints = useMemo(() => points.slice(2), [points]);
   return (
-    <CELL_TAG {...props} x={points[0]} y={points[1]} points={otherPoints} type={POLYGON_TYPE} />
+    <Cell {...props} x={points[0]} y={points[1]} points={otherPoints} type={POLYGON_TYPE} />
   )
 };

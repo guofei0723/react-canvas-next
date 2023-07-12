@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface QuadraticCurveProps extends Omit<CellPropsBase, 'children'> {
   /**
@@ -28,6 +28,6 @@ export interface QuadraticCurveModel extends CellModel<QuadraticCurveProps> {
 
 export const QuadraticCurve: FC<QuadraticCurveProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={QUADRATICCURVE_TYPE} />
+    <Cell {...props} type={QUADRATICCURVE_TYPE} />
   )
 };

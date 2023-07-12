@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface EllipseProps extends Omit<CellPropsBase, 'children'> {
   /**
@@ -47,6 +47,6 @@ export interface EllipseModel extends CellModel<EllipseProps> {
 
 export const Ellipse: FC<EllipseProps> = (props) => {
   return (
-    <CELL_TAG rotation={0} {...props} type={ELLIPSE_TYPE} />
+    <Cell rotation={0} {...props} type={ELLIPSE_TYPE} />
   )
 };

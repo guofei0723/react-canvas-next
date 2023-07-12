@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 import { parsePathD } from './parser';
 
 export interface PathProps extends CellPropsBase {
@@ -28,8 +28,8 @@ export const Path: FC<PathProps> = ({
   const nodes = comps?.map(({ c: Comp, p: compProps }, i) => (<Comp key={i} {...compProps} />))
 
   return (
-    <CELL_TAG {...props} type={PATH_TYPE}>
+    <Cell {...props} type={PATH_TYPE}>
       {nodes || children}
-    </CELL_TAG>
+    </Cell>
   )
 };

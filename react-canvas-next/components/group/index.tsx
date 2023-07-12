@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CELL_TAG, CellModel, CellPropsBase } from '../base'
+import { Cell, CellModel, CellPropsBase } from '../base'
 
 export interface GroupProps extends CellPropsBase {}
 
@@ -11,6 +11,6 @@ export interface GroupModel extends CellModel<GroupProps> {
 
 export const Group: FC<GroupProps> = (props) => {
   return (
-    <CELL_TAG {...props} type={GROUP_TYPE} />
+    <Cell {...props} type={GROUP_TYPE} />
   )
 };

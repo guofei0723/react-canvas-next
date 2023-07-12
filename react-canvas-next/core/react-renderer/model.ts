@@ -1,7 +1,5 @@
-import { RectProps, ShapeModels } from '../../components';
-import { CellId, CellProps } from '../../components/base';
+import { ShapeModels } from '../../components';
 
 export interface CellStore {
-  cellIds: Array<CellId>;
-  entities: Record<CellId, ShapeModels>;
+  cells: ShapeModels[];
 }
