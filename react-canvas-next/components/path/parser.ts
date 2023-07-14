@@ -36,14 +36,15 @@ export function parsePathD(d: string): CompInfo[] {
   const cmdRegEx = /([MLQTCSAZVH])([^MLQTCSAZVH]*)/ig;
   const commands = d.match(cmdRegEx);
 
-  const paramRegEx = /([MLQTCSAZVH])|(\d+)/ig;
+  const paramRegEx = /([MLQTCSAZVH])|(\-?\d+)/ig;
 
 
   // current subpath begin positiion
   const subPathBegin = { x: 0, y: 0 };
   // prev direction position
   const prevPos = { x: 0, y: 0 };
-  const prevCmd = { d: '', params: [] as number[] };
+  let prevCmd = { d: '', params: [] as number[] };
+  let currCmd = { d: '', params: [] as number[] };
   // the shape components
   const comps: Array<{ c: React.FC<any>, p: any}> = [];
   let compBeginPos: PointLike | null = null;
@@ -78,8 +79,15 @@ export function parsePathD(d: string): CompInfo[] {
     }
 
     const upD = d.toUpperCase();
-    prevCmd.d = upD;
-    prevCmd.params = params;
+    prevCmd = {
+      ...currCmd,
+    }
+    currCmd = {
+      d: upD,
+      params,
+    }
+    // prevCmd.d = upD;
+    // prevCmd.params = params;
 
     switch (upD) {
       case 'M': {
