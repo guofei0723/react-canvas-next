@@ -1,18 +1,12 @@
 import { rotatePi } from '@/react-canvas-next/utils/math';
 import { svgArcToCenterParam } from './svgArcToCenterParam';
-import { Line, LineProps } from '../line';
+import { Line } from '../line';
 import { BezierCurve } from '../bezier-curve';
 import { QuadraticCurve } from '../quadratic-curve';
 import { Ellipse } from '../ellipse';
+import { parseDtoCmd } from './parse-d-to-cmd';
 
 type PointLike = { x: number, y: number }
-type ParamsMapper = (params: number[], subBegin: PointLike, prevPos: PointLike) => number[];
-
-function dXY(params: number[], prevPos: PointLike) {
-  const l = params.length;
-  prevPos.x += params[l - 2];
-  prevPos.y += params[l - 1];
-}
 
 function copyXY(params: number[], prevPos: PointLike) {
   const l = params.length;
@@ -29,38 +23,20 @@ function assertLength (params: number[], l: number, d: string) {
   return false;
 }
 
-type CmdInfos = { cmd: string, params: number[] };
 type CompInfo = { c: React.FC<any>, p: any };
 
 /**
  * parse path d attribute
  */
 export function parsePathD(d: string): CompInfo[] {
-  const cmdRegEx = /([MLQTCSAZVH])([^MLQTCSAZVH]*)/ig;
-  const commands = d.match(cmdRegEx);
-
-  const paramRegEx = /([MLQTCSAZVH])|(\-?\d+)/ig;
 
   const parsedCmds: any[] = [];
+  const commands = parseDtoCmd(d);
 
   // 解析命令
   commands?.forEach(cmd => {
-    const arr = cmd.match(paramRegEx);
-    if (!arr) { 
-      console.error(new Error(`Path can not recognize command: ${cmd}`));
-      return;
-     };
 
-    const [d, ...paramStrs] = arr;
-    let params: number[] = [];
-    try {
-      params = paramStrs.map(p => parseFloat(p));
-    } catch (e) {
-      console.error(`Parsing command arguments failed: ${cmd}`);
-      console.error(e);
-
-      return;
-    }
+    const [d, ...params] = cmd;
 
     let valid = false;
     let paramsLength = -1;
@@ -143,16 +119,12 @@ export function parsePathD(d: string): CompInfo[] {
   // prev direction position
   const prevPos = { x: 0, y: 0 };
   let prevCmd = { d: '', params: [] as number[] };
-  let currCmd = { d: '', params: [] as number[] };
   // the shape components
   const comps: Array<{ c: React.FC<any>, p: any}> = [];
   let compBeginPos: PointLike | null = null;
 
   parsedCmds.forEach((cmd) => {
-    // const arr = cmd.match(paramRegEx);
-    // if (!arr) { return null };
     const [d, ...params] = cmd;
-    // let params = paramStrs.map(p => parseFloat(p));
     // turn to absolute coordinates
     switch(d) {
       case 'a': {
@@ -276,28 +248,31 @@ export function parsePathD(d: string): CompInfo[] {
       }
 
       case 'S': {
-        if (!['c', 'C', 's', 'S'].includes(prevCmd.d)) {
-          valid = false;
-          console.error(new Error(`Path command "${d}" can only appear after Command "C" or "c"`))
-        } else {
-          copyXY(params, prevPos);
-  
+        let cp1X: number;
+        let cp1Y: number;
+
+        if (['c', 'C', 's', 'S'].includes(prevCmd.d)) {
           const [c2x, c2y, ex, ey] = prevCmd.params.slice(2, 6);
           const cp1 = rotatePi(c2x, c2y, ex, ey);
-  
-          const [cp1X, cp1Y] = cp1;
-          const [cp2X, cp2Y, endX, endY] = params;
-  
-          comps.push({
-            c: BezierCurve,
-            p: {
-              ...compBeginPos,
-              cp1X, cp1Y, cp2X, cp2Y, endX, endY,
-            }
-          });
-
-          convertedParams = [cp1X, cp1Y, cp2X, cp2Y, endX, endY];
+          
+          [cp1X, cp1Y] = cp1;
+        } else {
+          cp1X = prevPos.x;
+          cp1Y = prevPos.y;
         }
+        
+        copyXY(params, prevPos);
+
+        const [cp2X, cp2Y, endX, endY] = params;
+        comps.push({
+          c: BezierCurve,
+          p: {
+            ...compBeginPos,
+            cp1X, cp1Y, cp2X, cp2Y, endX, endY,
+          }
+        });
+
+        convertedParams = [cp1X, cp1Y, cp2X, cp2Y, endX, endY];
 
         // return { cmd: 'bezierCurveTo', params: [...cp1, ...params]};
         break;
@@ -321,28 +296,31 @@ export function parsePathD(d: string): CompInfo[] {
       }
 
       case 'T': {
-        if (!['Q', 'q', 'T', 't'].includes(prevCmd.d)) {
-          valid = false;
-          console.error(new Error(`Path command "${d}" can only appear after Command "Q" or "q"`));
-        } else {
-          copyXY(params, prevPos);
-  
+        let cpX: number;
+        let cpY: number;
+
+        if (['Q', 'q', 'T', 't'].includes(prevCmd.d)) {
           const [cpx, cpy, ex, ey] = prevCmd.params;
           const cp = rotatePi(cpx, cpy, ex, ey);
-  
-          const [cpX, cpY] = cp;
-          const [endX, endY] = params;
-  
-          comps.push({
-            c: QuadraticCurve,
-            p: {
-              ...compBeginPos,
-              cpX, cpY, endX, endY,
-            }
-          });
-  
-          convertedParams = [cpX, cpY, endX, endY];
+          
+          [cpX, cpY] = cp;
+        } else {
+          cpX = prevPos.x;
+          cpY = prevPos.y;
         }
+
+        copyXY(params, prevPos);
+
+        const [endX, endY] = params;
+        comps.push({
+          c: QuadraticCurve,
+          p: {
+            ...compBeginPos,
+            cpX, cpY, endX, endY,
+          }
+        });
+
+        convertedParams = [cpX, cpY, endX, endY];
         // return { cmd: 'quadraticCurveTo', params: [...cp, ...params] };
         break;
       }
@@ -402,51 +380,4 @@ export function parsePathD(d: string): CompInfo[] {
   });
 
   return comps;
-  // return directs?.filter(d => d) as CmdInfos[];
 }
-
-// const compMap = {
-//   lineTo: Line,
-//   bezierCurveTo: BezierCurve,
-//   quadraticCurveTo: QuadraticCurve,
-//   ellipse: Ellipse,
-// } as const;
-
-// export function directsToComps(directs: ReturnType<typeof parsePathD>) {
-//   let prevPos: PointLike | null = null;
-//   const comps: any[] = [];
-  
-//   directs?.forEach(d => {
-//     if (d.cmd === 'moveTo') {
-//       const [x, y] = d.params as number[];
-//       prevPos = {
-//         x,
-//         y,
-//       };
-
-//       return;
-//     }
-
-//     if (d.cmd === 'closePath' && comps.length > 0) {
-//       comps[comps.length - 1].props.close = true;
-//       return;
-//     }
-
-//     switch (d.cmd as keyof typeof compMap) {
-//       case 'lineTo': {
-//         const [endX, endY] = d.params;
-//         const props: LineProps = {
-//           endX, endY,
-//         };
-
-//         if (prevPos) {
-//           props.x = prevPos.x;
-//           props.y = prevPos.y;
-//           prevPos = null;
-//         }
-       
-//         return [compMap.lineTo, props];
-//       }
-//     }
-//   });
-// }

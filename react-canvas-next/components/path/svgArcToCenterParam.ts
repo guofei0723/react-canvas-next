@@ -86,8 +86,6 @@ export function svgArcToCenterParam(x1: number, y1: number, rx: number, ry: numb
   while (deltaAngle < 0.0) { deltaAngle += PIx2; }
   if (fS == false || fS == 0) { deltaAngle -= PIx2; }
   endAngle = startAngle + deltaAngle;
-  while (endAngle > PIx2) { endAngle -= PIx2; }
-  while (endAngle < 0.0) { endAngle += PIx2; }
 
   var outputObj = { /* cx, cy, startAngle, deltaAngle */
     cx: cx,
