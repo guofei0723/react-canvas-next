@@ -1,4 +1,4 @@
-import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_TYPE, PathProps, QUADRATICCURVE_TYPE, RECT_TYPE, ShapeModels } from '../components';
+import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_TYPE, PathProps, QUADRATICCURVE_TYPE, RECT_TYPE, ShapeModels, TEXT_TYPE } from '../components';
 import { ARCCURVE_TYPE } from '../components/arc-curve';
 import { CellProps } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
@@ -260,6 +260,17 @@ export default class Renderer {
           }
           break;
         }
+        case TEXT_TYPE: {
+          if (this.inPathMode()) {
+            console.warn('Text components cannot be used as child elements of Path');
+          }
+          const { font, textAlign, textBaseline, direction } = props;
+          ctx.font = font!;
+          ctx.textAlign = textAlign!;
+          ctx.textBaseline = textBaseline!;
+          ctx.direction = direction!;
+          break;
+        }
       }
 
       if (type === PATH_TYPE) {
@@ -281,10 +292,29 @@ export default class Renderer {
 
       if (this.shouldPaintShape(type, props)) {
         if (this.shouldFillColor()) {
-          ctx.fill(fillRule);
+          switch(type) {
+            case TEXT_TYPE: {
+              ctx.fillText(props.text, props.x || 0, props.y || 0, props.maxWidth);
+              console.log('fillText:', props);
+              break;
+            }
+
+            default: {
+              ctx.fill(fillRule);
+            }
+          }
         }
         if (this.shouldDrawStroke()) {
-          ctx.stroke();
+          switch (type) {
+            case TEXT_TYPE: {
+              ctx.strokeText(props.text, props.x || 0, props.y || 0, props.maxWidth);
+              break;
+            }
+
+            default: {
+              ctx.stroke();
+            }
+          }
         }
       }
 

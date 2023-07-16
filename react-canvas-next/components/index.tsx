@@ -11,3 +11,4 @@ export * from './bezier-curve';
 export * from './quadratic-curve';
 export * from './line';
 export * from './polygon';
+export * from './text';
