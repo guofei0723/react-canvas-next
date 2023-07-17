@@ -45,7 +45,6 @@ export const hostConfig: HostConfig<
   noTimeout: undefined,
   isPrimaryRenderer: false,
   createInstance: function (_tagType: string, props: Props, rootContainer: Container, hostContext: any, internalHandle: any): Instance {
-    console.log('createInstance:', { _tagType, props, rootContainer, hostContext, internalHandle });
     const { children, type: cellType, ...instanceProps } = props;
 
     const obj = {
@@ -58,15 +57,16 @@ export const hostConfig: HostConfig<
     return obj;
   },
   createTextInstance: function (text: string, rootContainer: Container, hostContext: any, internalHandle: any): TextInstance {
-    console.error("Function not implemented.");
+    console.warn("String child elements are not supported:", text);
     return text;
   },
   appendInitialChild: function (parent: Instance, child: Instance): void {
-    console.log('appendInitialChild:', { parent, child });
+    if (typeof child === 'string') {
+      return;
+    }
     parent.children.push(child);
   },
   finalizeInitialChildren: function (instance: Instance, type: string, props: Props, rootContainer: Container, hostContext: any): boolean {
-    console.log('finalizeInitialChildren:', { instance, type, props, rootContainer, hostContext })
     return false;
   },
   prepareUpdate: function (instance: Instance, type: string, oldProps: Props, newProps: Props, rootContainer: Container, hostContext: any) {
@@ -79,75 +79,67 @@ export const hostConfig: HostConfig<
     return false;
   },
   getRootHostContext: function (rootContainer: Container) {
-    console.error("Function not implemented.");
     return null;
   },
   getChildHostContext: function (parentHostContext: any, type: string, rootContainer: Container) {
-    console.error("Function not implemented.");
     return parentHostContext;
   },
   getPublicInstance: function (instance: Instance) {
     return instance;
   },
   prepareForCommit: function (containerInfo: Container): Record<string, any> | null {
-    console.error("Function not implemented.");
     return null;
   },
   resetAfterCommit: function (containerInfo: Container): void {
-    console.error("Function not implemented.");
+    // console.error("Function not implemented.");
   },
   preparePortalMount: function (containerInfo: Container): void {
-    console.error("Function not implemented.");
+    console.error("preparePortalMount Function not implemented.");
   },
   scheduleTimeout: function (fn: (...args: unknown[]) => unknown, delay?: number | undefined) {
-    console.error("Function not implemented.");
+    console.error("scheduleTimeout Function not implemented.");
   },
   cancelTimeout: function (id: any): void {
-    console.error("Function not implemented.");
+    console.error("cancelTimeout Function not implemented.");
   },
   getCurrentEventPriority: function (): number {
-    console.error("Function not implemented.");
+    console.error("getCurrentEventPriority Function not implemented.");
     return DefaultEventPriority;
   },
   getInstanceFromNode: function (node: any): Fiber | null | undefined {
-    console.error("Function not implemented.");
+    console.error("getInstanceFromNode Function not implemented.");
     return null;
   },
   beforeActiveInstanceBlur: function (): void {
-    console.error("Function not implemented.");
+    console.error("beforeActiveInstanceBlur Function not implemented.");
   },
   afterActiveInstanceBlur: function (): void {
-    console.error("Function not implemented.");
+    console.error("afterActiveInstanceBlur Function not implemented.");
   },
   prepareScopeUpdate: function (scopeInstance: any, instance: any): void {
-    console.error("Function not implemented.");
+    console.error("prepareScopeUpdate Function not implemented.");
   },
   getInstanceFromScope: function (scopeInstance: any): Instance | null {
-    console.error("Function not implemented.");
+    console.error("getInstanceFromScope Function not implemented.");
     return null;
   },
   detachDeletedInstance: function (node: Instance): void {
-    console.log('detachDeletedInstance:', node, this);
-    console.error("Function not implemented.");
+    // console.log('detachDeletedInstance:', node, this);
   },
   createContainerChildSet(container): ChildSet {
-    console.log('createContainerChildSet:', { container });
     return [];
   },
   appendChildToContainerChildSet(childSet, child: Instance) {
-    console.log('appendChildToContainerChildSet:', { childSet, child });
     childSet.push(child);
   },
   finalizeContainerChildren(container, newChildren) {
-    console.log('finalizeContainerChildren:', { container, newChildren });
+    // console.log('finalizeContainerChildren:', { container, newChildren });
   },
   replaceContainerChildren(container, newChildren) {
-    console.log('replaceContainerChildren:', { container, newChildren });
     container.data = { cells: newChildren };
     container.updateCanvas();
   },
   cloneInstance(instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance) {
-    console.log('cloneInstance:', {instance, updatePayload, type, oldProps, newProps, internalInstanceHandle, keepChildren, recyclableInstance})
     const { children: newChildren, type: newCellType, ...newInstanceProps } = newProps;
 
     let newOne = instance;

@@ -18,7 +18,6 @@ export default class Root {
     updateCanvas: () => {
       cancelAnimationFrame(this._updateId);
       this._updateId = requestAnimationFrame(() => {
-        console.info('update canvas');
         this.onUpdate?.();
       });
     }
@@ -46,7 +45,8 @@ export default class Root {
   }
 
   unmount() {
-    console.error('not implement');
+    cancelAnimationFrame(this._updateId);
+    this.store.data = { cells: [] };
     this._unmounted = true;
   }
 }

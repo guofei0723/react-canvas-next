@@ -2,6 +2,7 @@ import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_T
 import { ARCCURVE_TYPE } from '../components/arc-curve';
 import { CellProps } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
+import { SUBPATH_TYPE } from '../components/path/sub-path';
 import { POLYGON_TYPE } from '../components/polygon';
 import { CellStore } from '../core/react-renderer/model';
 import Root from '../core/react-renderer/root';
@@ -13,14 +14,12 @@ export type KeepAspectRatioType = boolean | 'meet' | 'slice';
 
 export default class Renderer {
   private ctx: CanvasRenderingContext2D;
-  private _rafId: number = 0;
   // 上一次渲染的数据
   private _prevData: CellStore | null = null;
   private _prevSize: { w: number, h: number };
   private _viewBox: ViewBox;
   private _keepAspectRatioj: KeepAspectRatioType = false;
-  private _clipPathCount = 0;
-  private _pathCount = 0;
+  private _subpathCount = 0;
 
   constructor(private canvas: HTMLCanvasElement, public root: Root,  private options: any) {
     this.ctx = canvas.getContext('2d')!;
@@ -96,14 +95,6 @@ export default class Renderer {
   }
 
   /**
-   * 循环
-   */
-  private loop = () => {
-    this.render();
-    this._rafId = requestAnimationFrame(this.loop);
-  }
-
-  /**
    * 渲染
    */
   public render() {
@@ -131,17 +122,10 @@ export default class Renderer {
   }
 
   /**
-   * is now in clipPath region
-   */
-  private inClipPath() {
-    return this._clipPathCount > 0;
-  }
-
-  /**
-   * is now in path or clipPath region
+   * is now in subpath context
    */
   private inPathMode() {
-    return this._clipPathCount > 0 || this._pathCount > 0;
+    return this._subpathCount > 0;
   }
 
   /**
@@ -178,7 +162,6 @@ export default class Renderer {
 
     cells.forEach((cell) => {
       const { type, props, children } = cell;
-      console.log('pating:', cell)
 
       ctx.save();
       
@@ -189,13 +172,6 @@ export default class Renderer {
       if (type === GROUP_TYPE) {
         ctx.translate(x, y);
       }
-
-      // /**
-      //  * 当前在路径内部时无需不能再开始新路径
-      //  */
-      // if (!this.inPathMode()) {
-      //   ctx.beginPath();
-      // }
 
       if (!this.inPathMode()) {
         const { fill, stroke, lineWidth } = props as CellProps;
@@ -262,7 +238,7 @@ export default class Renderer {
         }
         case TEXT_TYPE: {
           if (this.inPathMode()) {
-            console.warn('Text components cannot be used as child elements of Path');
+            console.warn('Text components cannot be used as subpath of Path');
           }
           const { font, textAlign, textBaseline, direction } = props;
           ctx.font = font!;
@@ -273,17 +249,17 @@ export default class Renderer {
         }
       }
 
-      if (type === PATH_TYPE) {
+      if (type === SUBPATH_TYPE) {
         // 记录剪切路径数量
-        this._pathCount += 1;
+        this._subpathCount += 1;
       }
 
       if (children.length > 0) {
         this.paintCells(children as ShapeModels[])
       }
 
-      if (type === PATH_TYPE) {
-        this._pathCount -= 1;
+      if (type === SUBPATH_TYPE) {
+        this._subpathCount -= 1;
       }
 
       if (closePath) {
@@ -321,27 +297,13 @@ export default class Renderer {
       ctx.restore();
 
       // as cliping path
-      if (type === PATH_TYPE && props.asClip) {
+      if (type === SUBPATH_TYPE && props.asClip) {
         ctx.clip(props.fillRule);
       }
     })
   }
 
   private shouldPaintShape(type: ShapeModels['type'], props: ShapeModels['props']) {
-    return type !== GROUP_TYPE && !this.inPathMode() && !(props as PathProps).asClip
+    return type !== GROUP_TYPE && type !== PATH_TYPE && !this.inPathMode() && !(props as PathProps).asClip
   }
-
-  // /**
-  //  * 启动
-  //  */
-  // start() {
-  //   this.loop();
-  // }
-
-  // /**
-  //  * 停止
-  //  */
-  // stop() {
-  //   cancelAnimationFrame(this._rafId);
-  // }
 }
