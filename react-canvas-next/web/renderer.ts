@@ -114,11 +114,11 @@ export default class Renderer {
   }
 
   private shouldDrawStroke() {
-    return this.ctx.strokeStyle !== 'transparent' && this.ctx.lineWidth < IGNORE_LINE_WIDTH;
+    return this.ctx.strokeStyle !== 'transparent' && this.ctx.strokeStyle !== 'rgba(0, 0, 0, 0)' && this.ctx.lineWidth < IGNORE_LINE_WIDTH;
   }
 
   private shouldFillColor() {
-    return this.ctx.fillStyle !== 'transparent';
+    return this.ctx.fillStyle !== 'transparent' && this.ctx.fillStyle !== 'rgba(0, 0, 0, 0)';
   }
 
   /**
@@ -245,6 +245,17 @@ export default class Renderer {
           ctx.textAlign = textAlign!;
           ctx.textBaseline = textBaseline!;
           ctx.direction = direction!;
+
+          // if (this.shouldFillColor()) {
+          //   ctx.fillText(props.text, props.x || 0, props.y || 0, props.maxWidth);
+          // }
+          // if (this.shouldDrawStroke()) {
+          //   ctx.strokeText(props.text, props.x || 0, props.y || 0, props.maxWidth);
+          // }
+          
+          // if (props.asClip) {
+          //   ctx.globalCompositeOperation = 'source-in';
+          // }
           break;
         }
       }
@@ -267,11 +278,11 @@ export default class Renderer {
       }
 
       if (this.shouldPaintShape(type, props)) {
+        // fill
         if (this.shouldFillColor()) {
-          switch(type) {
+          switch (type) {
             case TEXT_TYPE: {
               ctx.fillText(props.text, props.x || 0, props.y || 0, props.maxWidth);
-              console.log('fillText:', props);
               break;
             }
 
@@ -280,13 +291,15 @@ export default class Renderer {
             }
           }
         }
+        // stroke
         if (this.shouldDrawStroke()) {
           switch (type) {
             case TEXT_TYPE: {
               ctx.strokeText(props.text, props.x || 0, props.y || 0, props.maxWidth);
+              console.log('fill text:', props);
               break;
             }
-
+            
             default: {
               ctx.stroke();
             }
@@ -304,6 +317,8 @@ export default class Renderer {
   }
 
   private shouldPaintShape(type: ShapeModels['type'], props: ShapeModels['props']) {
-    return type !== GROUP_TYPE && type !== PATH_TYPE && !this.inPathMode() && !(props as PathProps).asClip
+    return type !== GROUP_TYPE && type !== PATH_TYPE
+      && !this.inPathMode()
+      && !(props as PathProps).asClip
   }
 }

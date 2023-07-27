@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState } from 'react';
-import { Canvas, CanvasProps, Circle, Group, Rect } from 'react-canvas-next';
+import { Canvas, CanvasProps, Circle, Group, Rect, Text } from 'react-canvas-next';
 
 const meta: Meta<typeof Canvas> = {
   component: Canvas,
@@ -28,6 +28,7 @@ export const Basic: Story = {
           <Rect x={10} y={10} width={25} height={25} fill='yellow' />
         </Group>
         <Circle cX={360} cY={60} r={40} fill='green' lineWidth={0} />
+        <Text text={'Nice Work'} font='80px seril' textBaseline='top' x={200} y={200} fill={'yellow'}/>
       </Canvas>
     )
   }

@@ -8,6 +8,7 @@ export interface TextProps extends Omit<CellPropsBase, 'children'> {
   textBaseline?: 'top' | 'hanging' | 'middle' | 'alphabetic' | 'ideographic' | 'bottom';
   direction?: 'ltr' | 'rtl' | 'inherit'
   maxWidth?: number;
+  // asClip?: boolean;
 }
 
 export const TEXT_TYPE = 'text';
