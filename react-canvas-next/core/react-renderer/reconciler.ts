@@ -70,10 +70,10 @@ export const hostConfig: HostConfig<
     return false;
   },
   prepareUpdate: function (instance: Instance, type: string, oldProps: Props, newProps: Props, rootContainer: Container, hostContext: any) {
-    const { children: _newChildren, type: newCellType, ...newInstanceProps } = newProps;
-    const { children: _oldChildren, type: oldCellType, ...oldInstanceProps } = oldProps;
+    const { children: _newChildren, imgObj: newImgObj, type: newCellType, ...newInstanceProps } = newProps;
+    const { children: _oldChildren, imgObj: oldImgObj, type: oldCellType, ...oldInstanceProps } = oldProps;
 
-    return newCellType !== oldCellType || !deepCompare(newInstanceProps, oldInstanceProps);
+    return newCellType !== oldCellType || newImgObj !== oldImgObj || !deepCompare(newInstanceProps, oldInstanceProps);
   },
   shouldSetTextContent: function (type: string, props: Props): boolean {
     return false;

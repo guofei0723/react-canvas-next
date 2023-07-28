@@ -5,6 +5,7 @@ import { CircleModel } from './circle';
 // import { ClipPathModel } from './clippath';
 import { EllipseModel } from './ellipse';
 import { GroupModel } from './group';
+import { ImageModel } from './image';
 import { LineModel } from './line';
 import { PathModel } from './path';
 import { SubPathModel } from './path/sub-path';
@@ -28,4 +29,5 @@ export type ShapeModels = RectModel
   | LineModel
   | PolygonModel
   | TextModel
+  | ImageModel
   ;

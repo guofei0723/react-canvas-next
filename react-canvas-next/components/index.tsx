@@ -12,3 +12,6 @@ export * from './quadratic-curve';
 export * from './line';
 export * from './polygon';
 export * from './text';
+export { Image } from './image';
+export type { ImageProps } from './image';
+

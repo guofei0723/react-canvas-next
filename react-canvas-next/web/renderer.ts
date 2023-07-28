@@ -2,6 +2,7 @@ import { ARC_TYPE, BEZIERCURVE_TYPE, ELLIPSE_TYPE, GROUP_TYPE, LINE_TYPE, PATH_T
 import { ARCCURVE_TYPE } from '../components/arc-curve';
 import { CellProps } from '../components/base';
 import { CIRCLE_TYPE } from '../components/circle';
+import { IMAGE_TYPE } from '../components/image';
 import { SUBPATH_TYPE } from '../components/path/sub-path';
 import { POLYGON_TYPE } from '../components/polygon';
 import { CellStore } from '../core/react-renderer/model';
@@ -278,29 +279,37 @@ export default class Renderer {
       }
 
       if (this.shouldPaintShape(type, props)) {
-        // fill
-        if (this.shouldFillColor()) {
-          switch (type) {
-            case TEXT_TYPE: {
+        switch (type) {
+          case TEXT_TYPE: {
+            if (this.shouldFillColor()) {
               ctx.fillText(props.text, props.x || 0, props.y || 0, props.maxWidth);
-              break;
+            }
+            if (this.shouldDrawStroke()) {
+              ctx.strokeText(props.text, props.x || 0, props.y || 0, props.maxWidth);
             }
 
-            default: {
+            break;
+          }
+
+          case IMAGE_TYPE: {
+            const { imgObj, sX, sY, sWidth, sHeight, x, y, width, height } = props;
+            if (props.imgObj) {
+              if ([sX, sY, sWidth, sHeight, x, y, width, height].filter(n => typeof n === 'number').length === 8) {
+                ctx.drawImage(imgObj, sX!, sY!, sWidth!, sHeight!, x, y, width!, height!);
+              } else if ([x, y, width, height].filter(n => typeof n === 'number').length === 4) {
+                ctx.drawImage(imgObj, x, y, width!, height!);
+              } else {
+                ctx.drawImage(imgObj, x, y);
+              }
+            }
+            break;
+          }
+
+          default: {
+            if (this.shouldFillColor()) {
               ctx.fill(fillRule);
             }
-          }
-        }
-        // stroke
-        if (this.shouldDrawStroke()) {
-          switch (type) {
-            case TEXT_TYPE: {
-              ctx.strokeText(props.text, props.x || 0, props.y || 0, props.maxWidth);
-              console.log('fill text:', props);
-              break;
-            }
-            
-            default: {
+            if (this.shouldDrawStroke()) {
               ctx.stroke();
             }
           }
