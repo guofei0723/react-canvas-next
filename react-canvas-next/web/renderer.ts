@@ -199,7 +199,7 @@ export default class Renderer {
       switch (type) {
         case RECT_TYPE: {
           const { width, height } = props;
-          ctx.rect(x, y, width, height);
+          ctx.rect(x, y, width!, height!);
           break;
         }
         case CIRCLE_TYPE: {
@@ -207,27 +207,27 @@ export default class Renderer {
           break;
         }
         case ARC_TYPE: {
-          ctx.arc(props.cX, props.cY, props.r, props.startAngle, props.endAngle, props.counterclockwise);
+          ctx.arc(props.cX!, props.cY!, props.r, props.startAngle, props.endAngle, props.counterclockwise);
           break;
         }
         case ELLIPSE_TYPE: {
-          ctx.ellipse(props.cX, props.cY, props.rX, props.rY, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
+          ctx.ellipse(props.cX!, props.cY!, props.rX!, props.rY!, props.rotation!, props.startAngle, props.endAngle, props.counterclockwise);
           break;
         }
         case ARCCURVE_TYPE: {
-          ctx.arcTo(props.cp1X, props.cp1Y, props.cp2X, props.cp2Y, props.r);
+          ctx.arcTo(props.cp1X!, props.cp1Y!, props.cp2X!, props.cp2Y!, props.r);
           break;
         }
         case BEZIERCURVE_TYPE: {
-          ctx.bezierCurveTo(props.cp1X, props.cp1Y, props.cp2X, props.cp2Y, props.endX, props.endY);
+          ctx.bezierCurveTo(props.cp1X!, props.cp1Y!, props.cp2X!, props.cp2Y!, props.endX!, props.endY!);
           break;
         }
         case QUADRATICCURVE_TYPE: {
-          ctx.quadraticCurveTo(props.cpX, props.cpY, props.endX, props.endY);
+          ctx.quadraticCurveTo(props.cpX!, props.cpY!, props.endX!, props.endY!);
           break;
         }
         case LINE_TYPE: {
-          ctx.lineTo(props.endX, props.endY);
+          ctx.lineTo(props.endX!, props.endY!);
           break;
         }
         case POLYGON_TYPE: {

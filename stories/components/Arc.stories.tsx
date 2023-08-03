@@ -21,8 +21,9 @@ type Story = StoryObj<typeof Arc>;
 
 export const Basic: Story = {
   args: {
-    cX: 200,
-    cY: 150,
+    // cX: 200,
+    // cY: 150,
+    center: [200, 100],
     r: 50,
     startAngle: 0,
     endAngle: 5, // Math.PI * x

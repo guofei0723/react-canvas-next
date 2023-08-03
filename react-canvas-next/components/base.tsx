@@ -1,5 +1,5 @@
 import { CSSProperties, ReactNode, useMemo } from 'react';
-import { makeID } from '../utils';
+import { PointProp, makeID, parsePointProp } from '../utils';
 
 export type CellId = string;
 
@@ -20,6 +20,10 @@ export interface CellProps {
    * The y-axis coordinate of the starting point.
    */
   y?: number;
+  /**
+   * starting point, short form of x and y
+   */
+  start?: PointProp;
   fill?: CSSProperties['color'] | CanvasGradient | CanvasPattern;
   fillRule?: CanvasFillRule;
   stroke?: CSSProperties['color'] | CanvasGradient | CanvasPattern;
@@ -33,7 +37,11 @@ export type CellPropsBaseWithoutChildren = Omit<CellPropsBase, 'children'>;
 
 export const CELL_TAG = 'canvasNextEle';
 
-export const Cell: React.FC<CellProps & Record<string, any>> = (props) => {
+export const Cell: React.FC<CellProps & Record<string, any>> = ({
+  start,
+  ...props
+}) => {
   const cellId = useMemo(makeID, []);
-  return <CELL_TAG {...props} cellId={cellId} />
+  const [x, y] = parsePointProp(start);
+  return <CELL_TAG x={x} y={y} {...props} cellId={cellId} />
 }

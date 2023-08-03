@@ -18,25 +18,60 @@ export type Size = {
   height: number;
 }
 
-export interface Rectangle extends PointLike, Size {}
+export type PairNumbers = [number, number];
+export type FourNumbers = [number, number, number, number];
+
+export type Rectangle = (PointLike & Size);
+
+export type RectangleProp = Rectangle | FourNumbers;
 
 /**
  * Point prop type
  */
-export type PointProp = { x: number, y: number } | [number, number];
+export type PointProp = PointLike | PairNumbers;
+export type SizeProp = Size | PairNumbers;
 
 /**
  * Parse point prop
  * @param point 
  * @returns 
  */
-export function parsePointProp(point: PointProp): { x: number, y: number} {
+export function parsePointProp(point?: PointProp): PairNumbers | [] {
+  if (!point) { return []; }
   if (Array.isArray(point)) {
-    return {
-      x: point[0],
-      y: point[1],
-    };
+    return point;
   }
 
-  return point;
+  const { x, y } = point;
+  return [x, y];
+}
+
+/**
+ * Parse size prop
+ * @param size
+ * @returns 
+ */
+export function parseSizeProp(size?: SizeProp): PairNumbers | [] {
+  if (!size) { return []; }
+  if (Array.isArray(size)) {
+    return size;
+  }
+
+  const { width, height } = size;
+  return [width, height];
+}
+
+/**
+ * Parse rectangle prop
+ * @param rectangle 
+ * @returns 
+ */
+export function parseRectangleProp(rectangle?: RectangleProp): FourNumbers | [] {
+  if (!rectangle) { return []; }
+  if (Array.isArray(rectangle)) {
+    return rectangle;
+  }
+
+  const { x, y, width, height } = rectangle;
+  return [x, y, width, height];
 }

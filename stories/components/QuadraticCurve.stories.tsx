@@ -21,12 +21,15 @@ type Story = StoryObj<typeof QuadraticCurve>;
 
 export const Basic: Story = {
   args: {
-    x: 50,
-    y: 20,
-    cpX: 230,
-    cpY: 30,
-    endX: 50,
-    endY: 100,
+    // x: 50,
+    // y: 20,
+    // cpX: 230,
+    // cpY: 30,
+    // endX: 50,
+    // endY: 100,
+    start: [50, 20],
+    control: [230, 30],
+    end: [50, 100],
     stroke: 'steelblue',
   }
 };

@@ -47,10 +47,12 @@ type Story = StoryObj<typeof Ellipse>;
 
 export const Basic: Story = {
   args: {
-    cX: 200,
-    cY: 150,
-    rX: 150,
-    rY: 80,
+    // cX: 200,
+    // cY: 150,
+    // rX: 150,
+    // rY: 80,
+    center: [200, 150],
+    radius: [150, 80],
     rotation: Math.PI / 4,
     startAngle: 0,
     endAngle: 1.6 * Math.PI,

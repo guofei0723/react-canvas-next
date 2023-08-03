@@ -21,12 +21,15 @@ type Story = StoryObj<typeof ArcCurve>;
 
 export const Basic: Story = {
   args: {
-    x: 200,
-    y: 20,
-    cp1X: 200,
-    cp1Y: 130,
-    cp2X: 50,
-    cp2Y: 20,
+    // x: 200,
+    // y: 20,
+    // cp1X: 200,
+    // cp1Y: 130,
+    // cp2X: 50,
+    // cp2Y: 20,
+    start: [200, 20],
+    control1: [200, 130],
+    control2: [50, 20],
     r: 40,
     stroke: 'darkcyan',
   }

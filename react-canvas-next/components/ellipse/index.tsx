@@ -1,23 +1,34 @@
 import { FC } from 'react'
 import { Cell, CellModel, CellPropsBase } from '../base'
+import { PointProp, parsePointProp } from '../../utils';
 
 export interface EllipseProps extends Omit<CellPropsBase, 'children'> {
   /**
    * The x-axis (horizontal) coordinate of the ellipse's center.
    */
-  cX: number;
+  cX?: number;
   /**
    * The y-axis (vertical) coordinate of the ellipse's center.
    */
-  cY: number;
+  cY?: number;
+  /**
+   * The coordinate of the arc's center.
+   * Short form of cX and cY
+   */
+  center?: PointProp;
   /**
    * The ellipse's major-axis radius. Must be non-negative.
    */
-  rX: number;
+  rX?: number;
   /**
    * The ellipse's minor-axis radius. Must be non-negative.
    */
-  rY: number;
+  rY?: number;
+  /**
+   * The ellipse's radius. Must be non-negative.
+   * short form of rX and rY
+   */
+  radius?: PointProp;
   /**
    * The rotation of the ellipse, expressed in radians.
    */
@@ -45,8 +56,14 @@ export interface EllipseModel extends CellModel<EllipseProps> {
   type: typeof ELLIPSE_TYPE,
 }
 
-export const Ellipse: FC<EllipseProps> = (props) => {
+export const Ellipse: FC<EllipseProps> = ({
+  center,
+  radius,
+  ...props
+}) => {
+  const [cX = 0, cY = 0] = parsePointProp(center);
+  const [rX = 10, rY = 10] = parsePointProp(radius);
   return (
-    <Cell rotation={0} {...props} type={ELLIPSE_TYPE} />
+    <Cell cX={cX} cY={cY} rX={rX} rY={rY} rotation={0} {...props} type={ELLIPSE_TYPE} />
   )
 };

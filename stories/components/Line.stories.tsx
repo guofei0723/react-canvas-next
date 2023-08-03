@@ -26,10 +26,12 @@ type Story = StoryObj<typeof Line>;
 
 export const Basic: Story = {
   args: {
-    x: 30,
-    y: 50,
-    endX: 150,
-    endY: 100,
+    // x: 30,
+    // y: 50,
+    // endX: 150,
+    // endY: 100,
+    start: [30, 50],
+    end: [150, 100],
     stroke: 'steelblue',
   }
 };

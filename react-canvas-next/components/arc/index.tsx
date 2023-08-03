@@ -1,15 +1,21 @@
 import { FC } from 'react'
 import { Cell, CellModel, CellPropsBase } from '../base'
+import { PointProp, parsePointProp } from '../../utils';
 
 export interface ArcProps extends Omit<CellPropsBase, 'children'> {
   /**
    * The horizontal coordinate of the arc's center.
    */
-  cX: number,
+  cX?: number,
   /**
    * The vertical coordinate of the arc's center.
    */
-  cY: number,
+  cY?: number,
+  /**
+   * The coordinate of the arc's center.
+   * Short form of cX and cY
+   */
+  center?: PointProp;
   /**
    * Arc radius
    */
@@ -39,8 +45,12 @@ export interface ArcModel extends CellModel<ArcProps> {
 /**
  * a circular arc
  */
-export const Arc: FC<ArcProps> = (props) => {
+export const Arc: FC<ArcProps> = ({
+  center,
+  ...props
+}) => {
+  const [cX = 0, cY = 0] = parsePointProp(center);
   return (
-    <Cell  {...props} type={ARC_TYPE} />
+    <Cell cX={cX} cY={cY} {...props} type={ARC_TYPE} />
   )
 };
