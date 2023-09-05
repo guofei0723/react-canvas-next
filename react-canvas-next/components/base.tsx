@@ -1,5 +1,5 @@
 import { CSSProperties, ReactNode, useMemo } from 'react';
-import { PointProp, makeID, parsePointProp } from '../utils';
+import { PointProp, RotateDirect, ScaleDirect, TransformMatrixDirect, TranslateDirect, makeID, parsePointProp } from '../utils';
 
 export type CellId = string;
 
@@ -30,6 +30,16 @@ export interface CellProps {
   lineWidth?: number;
   children?: ReactNode;
   close?: boolean;
+  /**
+   * The transform attribute defines a list of transform definitions
+   * 
+   * eg.
+   * 
+   * ```tsx
+   * <Rect transform={[translate(10, 20), rotate(Math.PI / 180 * 25), scale(0.5, 0.5)]}
+   * ```
+   */
+  transform?: Array<TranslateDirect | RotateDirect | ScaleDirect | TransformMatrixDirect>  | TranslateDirect | RotateDirect | ScaleDirect | TransformMatrixDirect;
 }
 
 export type CellPropsBase = Omit<CellProps, 'type'>;

@@ -7,6 +7,7 @@ import { SUBPATH_TYPE } from '../components/path/sub-path';
 import { POLYGON_TYPE } from '../components/polygon';
 import { CellStore } from '../core/react-renderer/model';
 import Root from '../core/react-renderer/root';
+import { RotateDirect, ScaleDirect, TransformMatrixDirect, TranslateDirect } from '../utils';
 
 export const IGNORE_LINE_WIDTH = 20190822;
 
@@ -167,11 +168,57 @@ export default class Renderer {
       ctx.save();
       
       // 基础设置，位置、旋转、缩放，颜色，边
-      const { x = 0, y = 0, fillRule, close: closePath } = props as CellProps;
+      const { x = 0, y = 0, fillRule, close: closePath, transform } = props as CellProps;
 
       // group translate
-      if (type === GROUP_TYPE) {
+      if (type === GROUP_TYPE && transform && transform.length > 0) {
         ctx.translate(x, y);
+      }
+
+      if (transform && transform.length > 0) {
+        type TFArray = TranslateDirect | RotateDirect | ScaleDirect | TransformMatrixDirect;
+
+        const doTransform = (tf: TFArray) => {
+          const [transformType, ...args] = tf;
+          let transformCmd: string = transformType;
+            switch (transformType) {
+              case 'matrix': {
+                transformCmd = 'transform';
+              }
+              case 'translate':
+              case 'rotate':
+              case 'scale': {
+                // @ts-ignore
+                ctx[transformCmd].apply(ctx, args);
+                break;
+              }
+            }
+        };
+
+        // transform list
+        if (Array.isArray(transform[0])) {
+          transform.forEach(tf => doTransform(tf as TFArray));
+        } else {
+          doTransform(transform as TFArray);
+        }
+
+        // if (transform[0] === 'matrix') {
+        //   const [, ...args] = transform as TransformMatrixArray;
+        //   ctx.transform.apply(ctx, args);
+        // } else {
+        //   transform.forEach((tf) => {
+        //     const [transformCmd, ...args] = tf as TranslateArray | RotateArray | ScaleArray | TransformMatrixArray;
+        //     switch (transformCmd) {
+        //       case 'translate':
+        //       case 'rotate':
+        //       case 'scale': {
+        //         // @ts-ignore
+        //         ctx[transformCmd].apply(ctx, args);
+        //         break;
+        //       }
+        //     }
+        //   })
+        // }
       }
 
       if (!this.inPathMode()) {
