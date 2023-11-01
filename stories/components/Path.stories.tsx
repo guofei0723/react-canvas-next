@@ -7,7 +7,7 @@ const meta: Meta<typeof Path> = {
   decorators: [
     (Story, { parameters: { canvasSize, canvasViewBox }}) => {
       return (
-        <Canvas width={canvasSize?.width} height={canvasSize?.height} viewBox={canvasViewBox}>
+        <Canvas width={canvasSize?.width || 400} height={canvasSize?.height || 300} viewBox={canvasViewBox}>
           <Story />
         </Canvas>
       )
@@ -56,6 +56,8 @@ export const D: Story = {
   name: 'd - Heart',
   args: {
     fill: 'red',
+    stroke: 'steelblue',
+    lineWidth: 2,
     d: `M 10,30
     A 20,20 0,0,1 50,30
     A 20,20 0,0,1 90,30
