@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useEffect, useRef } from 'react'
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react'
 import Root from '../core/react-renderer/root';
 import Renderer, { IGNORE_LINE_WIDTH, KeepAspectRatioType } from './renderer';
 import { FiberProvider, useContextBridge } from 'its-fine';
@@ -74,7 +74,13 @@ const CanvasImpl: React.FC<CanvasProps> = ({
 }
 
 export const  Canvas: React.FC<CanvasProps> = (props) => {
-  return (
+  const [isBrowser, setIsBrowser] = useState(false);
+
+  useEffect(() => {
+    setIsBrowser(typeof window === 'object');
+  }, []);
+
+  return !isBrowser ? null : (
     <FiberProvider>
       <CanvasImpl {...props} />
     </FiberProvider>

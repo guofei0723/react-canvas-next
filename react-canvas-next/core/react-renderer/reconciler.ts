@@ -2,7 +2,7 @@ import Reconciler, { Fiber, HostConfig } from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants';
 import { CellStore } from './model';
 import { deepCompare } from '../../utils';
-import { ShapeModels } from '@/react-canvas-next/components';
+import { ShapeModels } from '../../components';
 
 export type DataStore = {
   data: CellStore;

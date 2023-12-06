@@ -1,4 +1,4 @@
-import { rotatePi } from '@/react-canvas-next/utils/math';
+import { rotatePi } from '../../utils/math';
 import { svgArcToCenterParam } from './svgArcToCenterParam';
 import { Line } from '../line';
 import { BezierCurve } from '../bezier-curve';

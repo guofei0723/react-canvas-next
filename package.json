@@ -1,15 +1,23 @@
 {
   "name": "react-canvas-next",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.0-beta.2",
+  "private": false,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build:app": "next build",
+    "prebuild": "rimraf es",
+    "build": "tsc --project tsconfig.npm.json",
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepublish": "npm run build"
   },
+  "files": [
+    "es"
+  ],
+  "main": "./es/index.js",
+  "types": "./es/index.d.js",
   "peerDependencies": {
     "react": "^18.2.0"
   },
@@ -35,6 +43,7 @@
     "next": "13.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "rimraf": "^5.0.5",
     "storybook": "^7.0.10",
     "tsconfig-paths-webpack-plugin": "^4.0.1",
     "typescript": "5.0.4"
