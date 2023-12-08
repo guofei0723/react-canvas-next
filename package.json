@@ -1,7 +1,14 @@
 {
   "name": "react-canvas-next",
   "version": "0.1.0-beta.2",
-  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guofei0723/react-canvas-next.git"
+  },
+  "author": {
+    "email": "guofei0723@gmail.com",
+    "name": "Fred Guo"
+  },
   "scripts": {
     "dev": "next dev",
     "build:app": "next build",
