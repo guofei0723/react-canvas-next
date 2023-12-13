@@ -58,6 +58,7 @@ export const D: Story = {
     fill: 'red',
     stroke: 'steelblue',
     lineWidth: 2,
+    lineDash: [4, 8],
     d: `M 10,30
     A 20,20 0,0,1 50,30
     A 20,20 0,0,1 90,30

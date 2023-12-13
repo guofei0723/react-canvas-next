@@ -33,5 +33,6 @@ export const Basic: Story = {
     start: [30, 50],
     end: [150, 100],
     stroke: 'steelblue',
+    lineCap: 'round',
   }
 };

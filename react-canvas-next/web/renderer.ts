@@ -222,7 +222,7 @@ export default class Renderer {
       }
 
       if (!this.inPathMode()) {
-        const { fill, stroke, lineWidth } = props as CellProps;
+        const { fill, stroke, lineWidth, lineCap, lineDashOffset, lineDash, lineJoin } = props as CellProps;
         if (fill) {
           ctx.fillStyle = fill;
         }
@@ -233,6 +233,22 @@ export default class Renderer {
 
         if (typeof lineWidth === 'number') {
           ctx.lineWidth = (lineWidth <= 0 || lineWidth === Infinity || isNaN(lineWidth)) ? IGNORE_LINE_WIDTH : lineWidth;
+        }
+
+        if (lineCap) {
+          ctx.lineCap = lineCap;
+        }
+
+        if (lineDashOffset) {
+          ctx.lineDashOffset = lineDashOffset;
+        }
+
+        if (lineDash) {
+          ctx.setLineDash(lineDash);
+        }
+
+        if (lineJoin) {
+          ctx.lineJoin = lineJoin;
         }
 
         ctx.beginPath();
