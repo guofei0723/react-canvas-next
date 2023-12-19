@@ -28,5 +28,8 @@ export const Basic: Story = {
     startAngle: 0,
     endAngle: 5, // Math.PI * x
     fill: 'steelblue',
+    lineCap: 'round',
+    lineJoin: 'round',
+    sector: true,
   }
 };

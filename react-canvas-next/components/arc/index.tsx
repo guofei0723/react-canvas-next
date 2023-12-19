@@ -34,6 +34,10 @@ export interface ArcProps extends Omit<CellPropsBase, 'children'> {
    * The default is false (clockwise).
    */
   counterclockwise?: boolean;
+  /**
+   * As a sector
+   */
+  sector?: boolean;
 }
 
 export const ARC_TYPE = 'arc';
@@ -47,10 +51,16 @@ export interface ArcModel extends CellModel<ArcProps> {
  */
 export const Arc: FC<ArcProps> = ({
   center,
+  sector,
   ...props
 }) => {
   const [cX = 0, cY = 0] = parsePointProp(center);
+  const sectorAttrs = !sector ? {} : {
+    x: cX,
+    y: cY,
+    close: true,
+  };
   return (
-    <Cell cX={cX} cY={cY} {...props} type={ARC_TYPE} />
+    <Cell cX={cX} cY={cY} {...sectorAttrs} {...props} type={ARC_TYPE} />
   )
 };

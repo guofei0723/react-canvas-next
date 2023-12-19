@@ -48,6 +48,10 @@ export interface EllipseProps extends Omit<CellPropsBase, 'children'> {
    * The default value is false (clockwise).
    */
   counterclockwise?: boolean;
+    /**
+   * As a sector
+   */
+    sector?: boolean;
 }
 
 export const ELLIPSE_TYPE = 'ellipse';
@@ -59,11 +63,19 @@ export interface EllipseModel extends CellModel<EllipseProps> {
 export const Ellipse: FC<EllipseProps> = ({
   center,
   radius,
+  sector,
   ...props
 }) => {
   const [cX = 0, cY = 0] = parsePointProp(center);
   const [rX = 10, rY = 10] = parsePointProp(radius);
+
+  const sectorAttrs = !sector ? {} : {
+    x: cX,
+    y: cY,
+    close: true,
+  };
+
   return (
-    <Cell cX={cX} cY={cY} rX={rX} rY={rY} rotation={0} {...props} type={ELLIPSE_TYPE} />
+    <Cell cX={cX} cY={cY} rX={rX} rY={rY} rotation={0} {...sectorAttrs} {...props} type={ELLIPSE_TYPE} />
   )
 };

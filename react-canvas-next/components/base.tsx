@@ -28,6 +28,10 @@ export interface CellProps {
   fillRule?: CanvasFillRule;
   stroke?: CSSProperties['color'] | CanvasGradient | CanvasPattern;
   lineWidth?: number;
+  lineCap?: 'butt' | 'round' | 'square';
+  lineDash?: number[];
+  lineDashOffset?: number;
+  lineJoin?: 'round' | 'bevel' | 'miter';
   children?: ReactNode;
   close?: boolean;
   /**
