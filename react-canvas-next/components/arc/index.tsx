@@ -56,8 +56,8 @@ export const Arc: FC<ArcProps> = ({
 }) => {
   const [cX = 0, cY = 0] = parsePointProp(center);
   const sectorAttrs = !sector ? {} : {
-    x: cX,
-    y: cY,
+    x: props.cX ?? cX,
+    y: props.cY ?? cY,
     close: true,
   };
   return (
