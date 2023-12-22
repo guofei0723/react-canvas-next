@@ -70,8 +70,8 @@ export const Ellipse: FC<EllipseProps> = ({
   const [rX = 10, rY = 10] = parsePointProp(radius);
 
   const sectorAttrs = !sector ? {} : {
-    x: cX,
-    y: cY,
+    x: props.cX ?? cX,
+    y: props.cY ?? cY,
     close: true,
   };
 
